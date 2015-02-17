@@ -10,6 +10,10 @@ QT = core dbus qml
 LIBS += -L../src -l$${MPRISQTLIB}
 PKGCONFIG = dbusextended-qt5
 
+EXAMPLE = ../example/declarative/*
+
+OTHER_FILES += $${EXAMPLE}
+
 TARGET = $${MPRISQTLIB}-qml-plugin
 PLUGIN_IMPORT_PATH = org/nemomobile/mpris
 
