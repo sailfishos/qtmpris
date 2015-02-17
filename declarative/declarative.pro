@@ -1,13 +1,14 @@
 include(../common.pri)
 
 TEMPLATE = lib
-CONFIG += qt plugin
+CONFIG += qt plugin link_pkgconfig
 DEPENDPATH += ../src
 INCLUDEPATH += ../src
 
 QT = core dbus qml
 
 LIBS += -L../src -l$${MPRISQTLIB}
+PKGCONFIG = dbusextended-qt5
 
 TARGET = $${MPRISQTLIB}-qml-plugin
 PLUGIN_IMPORT_PATH = org/nemomobile/mpris

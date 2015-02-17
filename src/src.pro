@@ -1,10 +1,11 @@
 include(../common.pri)
 
 TEMPLATE = lib
-CONFIG += qt
+CONFIG += qt link_pkgconfig
 
 QT = core dbus qml
 
+PKGCONFIG = dbusextended-qt5
 TARGET = $${MPRISQTLIB}
 
 QMAKE_SUBSTITUTES = $${TARGET}.prf.in
@@ -20,21 +21,32 @@ SOURCES += \
     mpris.cpp \
     mprisrootadaptor.cpp \
     mprisplayeradaptor.cpp \
-    mprisplayer.cpp
+    mprisplayer.cpp \
+    mpriscontroller.cpp \
+    mprismanager.cpp \
+    mprisplayerinterface.cpp \
+    mprisrootinterface.cpp
 
 HEADERS += \
     mprisqt.h \
     mpris.h \
     mprisplayer.h \
-    mprisplayer_p.h
+    mprisplayer_p.h \
+    mpriscontroller.h \
+    mpriscontroller_p.h \
+    mprismanager.h
 
 INSTALL_HEADERS = \
     MprisQt \
     Mpris \
     MprisPlayer \
+    MprisController \
+    MprisManager \
     mprisqt.h \
     mpris.h \
-    mprisplayer.h
+    mprisplayer.h \
+    mpriscontroller.h \
+    mprismanager.h
 
 OTHER_FILES += org.mpris.MediaPlayer2.xml \
     org.mpris.MediaPlayer2.Player.xml
@@ -46,7 +58,7 @@ prf.files = $${TARGET}.prf
 prf.path = $$[QMAKE_MKSPECS]/features
 INSTALLS += target headers prf
 
-QMAKE_PKGCONFIG_REQUIRES = Qt5Core Qt5DBus
+QMAKE_PKGCONFIG_REQUIRES = Qt5Core Qt5DBus dbusextended-qt5
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_INCDIR = $$headers.path
 QMAKE_PKGCONFIG_DESTDIR = pkgconfig

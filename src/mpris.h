@@ -95,6 +95,7 @@ private:
     friend class MprisRootAdaptor;
     friend class MprisPlayerAdaptor;
     friend class MprisPlayer;
+    friend class MprisController;
 };
 
 #endif /* MPRIS_H */

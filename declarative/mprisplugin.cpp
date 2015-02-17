@@ -27,6 +27,7 @@
 
 #include <Mpris>
 #include <MprisPlayer>
+#include <MprisManager>
 
 #include <qqml.h>
 
@@ -42,4 +43,5 @@ MprisPlugin::~MprisPlugin() {
 void MprisPlugin::registerTypes(const char *uri) {
     qmlRegisterType<Mpris>(uri, 1, 0, "Mpris");
     qmlRegisterType<MprisPlayer>(uri, 1, 0, "MprisPlayer");
+    qmlRegisterType<MprisManager>(uri, 1, 0, "MprisManager");
 }
