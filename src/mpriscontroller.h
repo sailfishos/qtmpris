@@ -150,6 +150,7 @@ public slots:
     Mpris::PlaybackStatus playbackStatus() const;
 
     qlonglong position() const;
+    void requestPosition() const;
 
     double rate() const;
     void setRate(double rate);
@@ -185,72 +186,27 @@ signals:
     void metadataChanged();
     void minimumRateChanged();
     void playbackStatusChanged();
+    void positionChanged(qlonglong position);
     void rateChanged();
     void shuffleChanged();
     void volumeChanged();
     void seeked(qlonglong position);
 
 protected Q_SLOTS:
-    void onCanQuitChanged(bool aCanQuit);
-    void onCanRaiseChanged(bool aCanRaise);
-    void onCanSetFullscreenChanged(bool aCanSetFullscreen);
-    void onDesktopEntryChanged(const QString &aDesktopEntry);
-    void onFullscreenChanged(bool aFullscreen);
-    void onHasTrackListChanged(bool aHasTrackList);
-    void onIdentityChanged(const QString &aIdentity);
-    void onSupportedUriSchemesChanged(const QStringList &aSupportedUriSchemes);
-    void onSupportedMimeTypesChanged(const QStringList &aSupportedMimeTypes);
-    void onCanGoNextChanged(bool aCanGoNext);
-    void onCanGoPreviousChanged(bool aCanGoPrevious);
-    void onCanPauseChanged(bool aCanPause);
-    void onCanPlayChanged(bool aCanPlay);
-    void onCanSeekChanged(bool aCanSeek);
-    void onLoopStatusChanged(const QString &aLoopStatus);
-    void onMaximumRateChanged(double aMaximumRate);
-    void onMetadataChanged(const QVariantMap &aMetadata);
-    void onMinimumRateChanged(double aMinimumRate);
-    void onPlaybackStatusChanged(const QString &aPlaybackStatus);
-    void onRateChanged(double aRate);
-    void onShuffleChanged(bool aShuffle);
-    void onVolumeChanged(double aVolume);
-    void initProperties();
+    void onAsyncGetAllRootPropertiesFinished();
+    void onAsyncGetAllPlayerPropertiesFinished();
+    void onCanControlChanged();
+    void onPositionChanged(qlonglong aPosition);
     void onFinishedPendingCall(QDBusPendingCallWatcher *call);
 
 private:
-    void initCanControl(bool aCanControl);
-
     MprisRootInterface *m_mprisRootInterface;
     MprisPlayerInterface *m_mprisPlayerInterface;
 
-    mutable bool m_validated;
-
-    // Mpris2 Root Interface
-    bool m_canQuit;
-    bool m_canRaise;
-    bool m_canSetFullscreen;
-    QString m_desktopEntry;
-    bool m_fullscreen;
-    bool m_hasTrackList;
-    QString m_identity;
-    QStringList m_supportedUriSchemes;
-    QStringList m_supportedMimeTypes;
-
-    // Mpris2 Player Interface
-    bool m_canControl;
-    bool m_canGoNext;
-    bool m_canGoPrevious;
-    bool m_canPause;
-    bool m_canPlay;
-    bool m_canSeek;
-    Mpris::LoopStatus m_loopStatus;
-    double m_maximumRate;
-    QVariantMap m_metadata;
-    QVariantMap m_typedMetadata;
-    double m_minimumRate;
-    Mpris::PlaybackStatus m_playbackStatus;
-    double m_rate;
-    bool m_shuffle;
-    double m_volume;
+    mutable bool m_initedRootInterface;
+    mutable bool m_initedPlayerInterface;
+    mutable bool m_requestedPosition;
+    bool m_canControlReceived;
 };
 
 #endif /* MPRISCONTROLLER_H */

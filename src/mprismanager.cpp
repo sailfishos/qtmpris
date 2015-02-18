@@ -44,9 +44,6 @@ static const QString dBusNameOwnerChangedSignal = QStringLiteral("NameOwnerChang
 MprisManager::MprisManager(QObject *parent)
     : QObject(parent)
     , m_singleService(false)
-    , m_currentController()
-    , m_availableControllers()
-    , m_otherPlayingControllers()
     , m_playbackStatusMapper(new QSignalMapper(this))
 {
     QDBusConnection connection = QDBusConnection::sessionBus();
@@ -78,125 +75,65 @@ MprisManager::~MprisManager()
 }
 
 // Mpris2 Root Interface
-bool MprisManager::quit()
+bool MprisManager::quit() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->quit();
+    return checkController(Q_FUNC_INFO) && m_currentController->quit();
 }
 
-bool MprisManager::raise()
+bool MprisManager::raise() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->raise();
+    return checkController(Q_FUNC_INFO) && m_currentController->raise();
 }
 
 // Mpris2 Player Interface
-bool MprisManager::next()
+bool MprisManager::next() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->next();
+    return checkController(Q_FUNC_INFO) && m_currentController->next();
 }
 
-bool MprisManager::openUri(const QUrl &uri)
+bool MprisManager::openUri(const QUrl &uri) const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->openUri(uri);
+    return checkController(Q_FUNC_INFO) && m_currentController->openUri(uri);
 }
 
-bool MprisManager::pause()
+bool MprisManager::pause() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->pause();
+    return checkController(Q_FUNC_INFO) && m_currentController->pause();
 }
 
-bool MprisManager::play()
+bool MprisManager::play() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->play();
+    return checkController(Q_FUNC_INFO) && m_currentController->play();
 }
 
-bool MprisManager::playPause()
+bool MprisManager::playPause() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->playPause();
+    return checkController(Q_FUNC_INFO) && m_currentController->playPause();
 }
 
-bool MprisManager::previous()
+bool MprisManager::previous() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->previous();
+    return checkController(Q_FUNC_INFO) && m_currentController->previous();
 }
 
-bool MprisManager::seek(qlonglong offset)
+bool MprisManager::seek(qlonglong offset) const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->seek(offset);
+    return checkController(Q_FUNC_INFO) && m_currentController->seek(offset);
 }
 
-bool MprisManager::setPosition(qlonglong position)
+bool MprisManager::setPosition(qlonglong position) const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->setPosition(position);
+    return checkController(Q_FUNC_INFO) && m_currentController->setPosition(position);
 }
 
-bool MprisManager::setPosition(const QString &trackId, qlonglong position)
+bool MprisManager::setPosition(const QString &trackId, qlonglong position) const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->setPosition(trackId, position);
+    return checkController(Q_FUNC_INFO) && m_currentController->setPosition(trackId, position);
 }
 
-bool MprisManager::stop()
+bool MprisManager::stop() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->stop();
+    return checkController(Q_FUNC_INFO) && m_currentController->stop();
 }
 
 
@@ -263,299 +200,171 @@ QStringList MprisManager::availableServices() const
 // Mpris2 Root Interface
 bool MprisManager::canQuit() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->canQuit();
+    return checkController(Q_FUNC_INFO) && m_currentController->canQuit();
 }
 
 bool MprisManager::canRaise() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->canRaise();
+    return checkController(Q_FUNC_INFO) && m_currentController->canRaise();
 }
 
 bool MprisManager::canSetFullscreen() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->canSetFullscreen();
+    return checkController(Q_FUNC_INFO) && m_currentController->canSetFullscreen();
 }
 
 QString MprisManager::desktopEntry() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return QString();
-    }
-
-    return m_currentController->desktopEntry();
+    return checkController(Q_FUNC_INFO) ? m_currentController->desktopEntry() : QString();
 }
 
 bool MprisManager::fullscreen() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->fullscreen();
+    return checkController(Q_FUNC_INFO) && m_currentController->fullscreen();
 }
 
 void MprisManager::setFullscreen(bool fullscreen)
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return;
+    if (checkController(Q_FUNC_INFO)) {
+        m_currentController->setFullscreen(fullscreen);
     }
-
-    m_currentController->setFullscreen(fullscreen);
 }
 
 bool MprisManager::hasTrackList() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->hasTrackList();
+    return checkController(Q_FUNC_INFO) && m_currentController->hasTrackList();
 }
 
 QString MprisManager::identity() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return QString();
-    }
-
-    return m_currentController->identity();
+    return checkController(Q_FUNC_INFO) ? m_currentController->identity() : QString();
 }
 
 QStringList MprisManager::supportedUriSchemes() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return QStringList();
-    }
-
-    return m_currentController->supportedUriSchemes();
+    return checkController(Q_FUNC_INFO) ? m_currentController->supportedUriSchemes() : QStringList();
 }
 
 QStringList MprisManager::supportedMimeTypes() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return QStringList();
-    }
-
-    return m_currentController->supportedMimeTypes();
+    return checkController(Q_FUNC_INFO) ? m_currentController->supportedMimeTypes() : QStringList();
 }
 
 // Mpris2 Player Interface
 bool MprisManager::canControl() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->canControl();
+    return checkController(Q_FUNC_INFO) && m_currentController->canControl();
 }
 
 bool MprisManager::canGoNext() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->canGoNext();
+    return checkController(Q_FUNC_INFO) && m_currentController->canGoNext();
 }
 
 bool MprisManager::canGoPrevious() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->canGoPrevious();
+    return checkController(Q_FUNC_INFO) && m_currentController->canGoPrevious();
 }
 
 bool MprisManager::canPause() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->canPause();
+    return checkController(Q_FUNC_INFO) && m_currentController->canPause();
 }
 
 bool MprisManager::canPlay() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->canPlay();
+    return checkController(Q_FUNC_INFO) && m_currentController->canPlay();
 }
 
 bool MprisManager::canSeek() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->canSeek();
+    return checkController(Q_FUNC_INFO) && m_currentController->canSeek();
 }
 
 Mpris::LoopStatus MprisManager::loopStatus() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return Mpris::None;
-    }
-
-    return m_currentController->loopStatus();
+    return checkController(Q_FUNC_INFO) ? m_currentController->loopStatus() : Mpris::None;
 }
 
 void MprisManager::setLoopStatus(Mpris::LoopStatus loopStatus)
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return;
+    if (checkController(Q_FUNC_INFO)) {
+        m_currentController->setLoopStatus(loopStatus);
     }
-
-    m_currentController->setLoopStatus(loopStatus);
 }
 
 double MprisManager::maximumRate() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return 1;
-    }
-
-    return m_currentController->maximumRate();
+    return checkController(Q_FUNC_INFO) ? m_currentController->maximumRate() : 1;
 }
 
 QVariantMap MprisManager::metadata() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return QVariantMap();
-    }
-
-    return m_currentController->metadata();
+    return checkController(Q_FUNC_INFO) ? m_currentController->metadata() : QVariantMap();
 }
 
 double MprisManager::minimumRate() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return 1;
-    }
-
-    return m_currentController->minimumRate();
+    return checkController(Q_FUNC_INFO) ? m_currentController->minimumRate() : 1;
 }
 
 Mpris::PlaybackStatus MprisManager::playbackStatus() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return Mpris::Stopped;
-    }
-
-    return m_currentController->playbackStatus();
+    return checkController(Q_FUNC_INFO) ? m_currentController->playbackStatus() : Mpris::Stopped;
 }
 
 qlonglong MprisManager::position() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return 0;
-    }
+    return checkController(Q_FUNC_INFO) ? m_currentController->position() : 0;
+}
 
-    return m_currentController->position();
+void MprisManager::requestPosition() const
+{
+    if (checkController(Q_FUNC_INFO)) {
+        m_currentController->requestPosition();
+    }
 }
 
 double MprisManager::rate() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return 1;
-    }
-
-    return m_currentController->rate();
+    return checkController(Q_FUNC_INFO) ? m_currentController->rate() : 1;
 }
 
 void MprisManager::setRate(double rate)
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return;
+    if (checkController(Q_FUNC_INFO)) {
+        m_currentController->setRate(rate);
     }
-
-    m_currentController->setRate(rate);
 }
 
 bool MprisManager::shuffle() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return false;
-    }
-
-    return m_currentController->shuffle();
+    return checkController(Q_FUNC_INFO) && m_currentController->shuffle();
 }
 
 void MprisManager::setShuffle(bool shuffle)
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return;
+    if (checkController(Q_FUNC_INFO)) {
+        m_currentController->setShuffle(shuffle);
     }
-
-    m_currentController->setShuffle(shuffle);
 }
 
 double MprisManager::volume() const
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return 0;
-    }
-
-    return m_currentController->volume();
+    return checkController(Q_FUNC_INFO) ? m_currentController->volume() : 0;
 }
 
 void MprisManager::setVolume(double volume)
 {
-    if (m_currentController.isNull()) {
-        qDebug() << Q_FUNC_INFO << "None service available/selected";
-        return;
+    if (checkController(Q_FUNC_INFO)) {
+        m_currentController->setVolume(volume);
     }
-
-    m_currentController->setVolume(volume);
 }
 
 
 // Private
 
-void MprisManager::onNameOwnerChanged(const QString &service, const QString &oldOwner, const QString& newOwner)
+void MprisManager::onNameOwnerChanged(const QString &service, const QString &oldOwner, const QString &newOwner)
 {
     // Unfortunately, QDBus doesn't allow flexible signal watchers.
     // Would it allow them, we could pass the filter "arg0namespace='org.mpris.MediaPlayer2'"
@@ -727,6 +536,7 @@ void MprisManager::setCurrentController(QSharedPointer<MprisController> controll
         disconnect(m_currentController.data(), SIGNAL(metadataChanged()), this, SIGNAL(metadataChanged()));
         disconnect(m_currentController.data(), SIGNAL(minimumRateChanged()), this, SIGNAL(minimumRateChanged()));
         disconnect(m_currentController.data(), SIGNAL(playbackStatusChanged()), this, SIGNAL(playbackStatusChanged()));
+        disconnect(m_currentController.data(), SIGNAL(positionChanged(qlonglong)), this, SIGNAL(positionChanged(qlonglong)));
         disconnect(m_currentController.data(), SIGNAL(rateChanged()), this, SIGNAL(rateChanged()));
         disconnect(m_currentController.data(), SIGNAL(shuffleChanged()), this, SIGNAL(shuffleChanged()));
         disconnect(m_currentController.data(), SIGNAL(volumeChanged()), this, SIGNAL(volumeChanged()));
@@ -774,4 +584,14 @@ void MprisManager::setCurrentController(QSharedPointer<MprisController> controll
     }
 
     emit currentServiceChanged();
+}
+
+bool MprisManager::checkController(const char *callerName) const
+{
+    if (m_currentController.isNull()) {
+        qWarning() << callerName << "None service available/selected";
+        return false;
+    }
+
+    return true;
 }

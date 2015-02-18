@@ -34,6 +34,11 @@
 
 MprisRootInterface::MprisRootInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent)
     : DBusExtendedAbstractInterface(service, path, staticInterfaceName(), connection, parent)
+    , m_canQuit(false)
+    , m_canRaise(false)
+    , m_canSetFullscreen(false)
+    , m_fullscreen(false)
+    , m_hasTrackList(false)
 {
     connect(this, SIGNAL(propertyChanged(QString, QVariant)), this, SLOT(onPropertyChanged(QString, QVariant)));
 }
@@ -45,25 +50,63 @@ MprisRootInterface::~MprisRootInterface()
 void MprisRootInterface::onPropertyChanged(const QString &propertyName, const QVariant &value)
 {
     if (propertyName == QStringLiteral("CanQuit")) {
-        emit canQuitChanged(value.toBool());
+        bool canQuit = value.toBool();
+        if (m_canQuit != canQuit) {
+            m_canQuit = canQuit;
+            emit canQuitChanged(m_canQuit);
+        }
     } else if (propertyName == QStringLiteral("CanRaise")) {
-        emit canRaiseChanged(value.toBool());
+        bool canRaise = value.toBool();
+        if (m_canRaise != canRaise) {
+            m_canRaise = canRaise;
+            emit canRaiseChanged(m_canRaise);
+        }
     } else if (propertyName == QStringLiteral("CanSetFullscreen")) {
-        emit canSetFullscreenChanged(value.toBool());
+        bool canSetFullscreen = value.toBool();
+        if (m_canSetFullscreen != canSetFullscreen) {
+            m_canSetFullscreen = canSetFullscreen;
+            emit canSetFullscreenChanged(m_canSetFullscreen);
+        }
     } else if (propertyName == QStringLiteral("DesktopEntry")) {
-        emit desktopEntryChanged(value.toString());
+        QString desktopEntry = value.toString();
+        if (m_desktopEntry != desktopEntry) {
+            m_desktopEntry = desktopEntry;
+            emit desktopEntryChanged(m_desktopEntry);
+        }
     } else if (propertyName == QStringLiteral("Fullscreen")) {
-        emit fullscreenChanged(value.toBool());
+        bool fullscreen = value.toBool();
+        if (m_fullscreen != fullscreen) {
+            m_fullscreen = fullscreen;
+            emit fullscreenChanged(m_fullscreen);
+        }
     } else if (propertyName == QStringLiteral("HasTrackList")) {
-        emit hasTrackListChanged(value.toBool());
+        bool hasTrackList = value.toBool();
+        if (m_hasTrackList != hasTrackList) {
+            m_hasTrackList = hasTrackList;
+            emit hasTrackListChanged(m_hasTrackList);
+        }
     } else if (propertyName == QStringLiteral("Identity")) {
-        emit identityChanged(value.toString());
+        QString identity= value.toString();
+        if (m_identity != identity) {
+            m_identity = identity;
+            emit identityChanged(m_identity);
+        }
     } else if (propertyName == QStringLiteral("SupportedMimeTypes")) {
-        emit supportedMimeTypesChanged(value.toStringList());
+        QStringList supportedUriSchemes = value.toStringList();
+        if (m_supportedUriSchemes != supportedUriSchemes) {
+            m_supportedUriSchemes = supportedUriSchemes;
+            emit supportedMimeTypesChanged(m_supportedUriSchemes);
+        }
     } else if (propertyName == QStringLiteral("SupportedUriSchemes")) {
-        emit supportedUriSchemesChanged(value.toStringList());
+        QStringList supportedMimeTypes = value.toStringList();
+        if (m_supportedMimeTypes != supportedMimeTypes) {
+            m_supportedMimeTypes = supportedMimeTypes;
+            emit supportedUriSchemesChanged(m_supportedMimeTypes);
+        }
     } else {
-        qWarning() << Q_FUNC_INFO << "Received PropertyChanged signal from unknown property.";
+        qWarning() << Q_FUNC_INFO
+                   << "Received PropertyChanged signal from unknown property: "
+                   << propertyName;
     }
 }
 

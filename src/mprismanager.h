@@ -84,22 +84,21 @@ public:
     MprisManager(QObject *parent = 0);
     ~MprisManager();
 
-
     // Mpris2 Root Interface
-    Q_INVOKABLE bool quit();
-    Q_INVOKABLE bool raise();
+    Q_INVOKABLE bool quit() const;
+    Q_INVOKABLE bool raise() const;
 
     // Mpris2 Player Interface
-    Q_INVOKABLE bool next();
-    Q_INVOKABLE bool openUri(const QUrl &uri);
-    Q_INVOKABLE bool pause();
-    Q_INVOKABLE bool play();
-    Q_INVOKABLE bool playPause();
-    Q_INVOKABLE bool previous();
-    Q_INVOKABLE bool seek(qlonglong offset);
-    Q_INVOKABLE bool setPosition(qlonglong position);
-    Q_INVOKABLE bool setPosition(const QString &trackId, qlonglong position);
-    Q_INVOKABLE bool stop();
+    Q_INVOKABLE bool next() const;
+    Q_INVOKABLE bool openUri(const QUrl &uri) const;
+    Q_INVOKABLE bool pause() const;
+    Q_INVOKABLE bool play() const;
+    Q_INVOKABLE bool playPause() const;
+    Q_INVOKABLE bool previous() const;
+    Q_INVOKABLE bool seek(qlonglong offset) const;
+    Q_INVOKABLE bool setPosition(qlonglong position) const;
+    Q_INVOKABLE bool setPosition(const QString &trackId, qlonglong position) const;
+    Q_INVOKABLE bool stop() const;
 
 public slots:
 
@@ -156,6 +155,7 @@ public slots:
     Mpris::PlaybackStatus playbackStatus() const;
 
     qlonglong position() const;
+    void requestPosition() const;
 
     double rate() const;
     void setRate(double rate);
@@ -194,6 +194,7 @@ signals:
     void metadataChanged();
     void minimumRateChanged();
     void playbackStatusChanged();
+    void positionChanged(qlonglong position);
     void rateChanged();
     void shuffleChanged();
     void volumeChanged();
@@ -208,6 +209,7 @@ private Q_SLOTS:
 private:
     QSharedPointer<MprisController> availableController(const QString &service);
     void setCurrentController(QSharedPointer<MprisController> controller);
+    bool checkController(const char *callerName) const;
 
     bool m_singleService;
     QSharedPointer<MprisController> m_currentController;

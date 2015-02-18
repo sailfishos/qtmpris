@@ -37,59 +37,44 @@ MprisController::MprisController(const QString &service, const QDBusConnection &
     : QObject(parent)
     , m_mprisRootInterface(new MprisRootInterface(service, mprisObjectPath, connection, this))
     , m_mprisPlayerInterface(new MprisPlayerInterface(service, mprisObjectPath, connection, this))
-    , m_validated(false)
-    , m_canQuit(false)
-    , m_canRaise(false)
-    , m_canSetFullscreen(false)
-    , m_desktopEntry()
-    , m_fullscreen(false)
-    , m_hasTrackList(false)
-    , m_identity()
-    , m_supportedUriSchemes()
-    , m_supportedMimeTypes()
-    , m_canControl(false)
-    , m_canGoNext(false)
-    , m_canGoPrevious(false)
-    , m_canPause(false)
-    , m_canPlay(false)
-    , m_canSeek(false)
-    , m_loopStatus(Mpris::None)
-    , m_maximumRate(1)
-    , m_metadata()
-    , m_typedMetadata()
-    , m_minimumRate(1)
-    , m_playbackStatus(Mpris::Stopped)
-    , m_rate(1)
-    , m_shuffle(false)
-    , m_volume(0)
+    , m_initedRootInterface(false)
+    , m_initedPlayerInterface(false)
+    , m_requestedPosition(false)
+    , m_canControlReceived(false)
 {
     // Mpris Root Interface
-    connect(m_mprisRootInterface, SIGNAL(canQuitChanged(bool)), this, SLOT(onCanQuitChanged(bool)));
-    connect(m_mprisRootInterface, SIGNAL(canRaiseChanged(bool)), this, SLOT(onCanRaiseChanged(bool)));
-    connect(m_mprisRootInterface, SIGNAL(canSetFullscreenChanged(bool)), this, SLOT(onCanSetFullscreenChanged(bool)));
-    connect(m_mprisRootInterface, SIGNAL(desktopEntryChanged(QString)), this, SLOT(onDesktopEntryChanged(QString)));
-    connect(m_mprisRootInterface, SIGNAL(fullscreenChanged(bool)), this, SLOT(onFullscreenChanged(bool)));
-    connect(m_mprisRootInterface, SIGNAL(hasTrackListChanged(bool)), this, SLOT(onHasTrackListChanged(bool)));
-    connect(m_mprisRootInterface, SIGNAL(identityChanged(QString)), this, SLOT(onIdentityChanged(QString)));
-    connect(m_mprisRootInterface, SIGNAL(supportedMimeTypesChanged(QStringList)), this, SLOT(onSupportedMimeTypesChanged(QStringList)));
-    connect(m_mprisRootInterface, SIGNAL(supportedUriSchemesChanged(QStringList)), this, SLOT(onSupportedUriSchemesChanged(QStringList)));
+    connect(m_mprisRootInterface, SIGNAL(asyncGetAllPropertiesFinished()), this, SLOT(onAsyncGetAllRootPropertiesFinished()));
+    connect(m_mprisRootInterface, SIGNAL(canQuitChanged(bool)), this, SIGNAL(canQuitChanged()));
+    connect(m_mprisRootInterface, SIGNAL(canRaiseChanged(bool)), this, SIGNAL(canRaiseChanged()));
+    connect(m_mprisRootInterface, SIGNAL(canSetFullscreenChanged(bool)), this, SIGNAL(canSetFullscreenChanged()));
+    connect(m_mprisRootInterface, SIGNAL(desktopEntryChanged(QString)), this, SIGNAL(desktopEntryChanged()));
+    connect(m_mprisRootInterface, SIGNAL(fullscreenChanged(bool)), this, SIGNAL(fullscreenChanged()));
+    connect(m_mprisRootInterface, SIGNAL(hasTrackListChanged(bool)), this, SIGNAL(hasTrackListChanged()));
+    connect(m_mprisRootInterface, SIGNAL(identityChanged(QString)), this, SIGNAL(identityChanged()));
+    connect(m_mprisRootInterface, SIGNAL(supportedMimeTypesChanged(QStringList)), this, SIGNAL(supportedMimeTypesChanged()));
+    connect(m_mprisRootInterface, SIGNAL(supportedUriSchemesChanged(QStringList)), this, SIGNAL(supportedUriSchemesChanged()));
+    m_mprisRootInterface->setUseCache(true);
 
     // Mpris Player Interface
-    connect(m_mprisPlayerInterface, SIGNAL(canGoNextChanged(bool)), this, SLOT(onCanGoNextChanged(bool)));
-    connect(m_mprisPlayerInterface, SIGNAL(canGoPreviousChanged(bool)), this, SLOT(onCanGoPreviousChanged(bool)));
-    connect(m_mprisPlayerInterface, SIGNAL(canPauseChanged(bool)), this, SLOT(onCanPauseChanged(bool)));
-    connect(m_mprisPlayerInterface, SIGNAL(canPlayChanged(bool)), this, SLOT(onCanPlayChanged(bool)));
-    connect(m_mprisPlayerInterface, SIGNAL(canSeekChanged(bool)), this, SLOT(onCanSeekChanged(bool)));
-    connect(m_mprisPlayerInterface, SIGNAL(canSeekChanged(bool)), this, SLOT(onCanSeekChanged(bool)));
-    connect(m_mprisPlayerInterface, SIGNAL(loopStatusChanged(QString)), this, SLOT(onLoopStatusChanged(QString)));
-    connect(m_mprisPlayerInterface, SIGNAL(maximumRateChanged(double)), this, SLOT(onMaximumRateChanged(double)));
-    connect(m_mprisPlayerInterface, SIGNAL(metadataChanged(QVariantMap)), this, SLOT(onMetadataChanged(QVariantMap)));
-    connect(m_mprisPlayerInterface, SIGNAL(minimumRateChanged(double)), this, SLOT(onMinimumRateChanged(double)));
-    connect(m_mprisPlayerInterface, SIGNAL(playbackStatusChanged(QString)), this, SLOT(onPlaybackStatusChanged(QString)));
-    connect(m_mprisPlayerInterface, SIGNAL(rateChanged(double)), this, SLOT(onRateChanged(double)));
-    connect(m_mprisPlayerInterface, SIGNAL(shuffleChanged(bool)), this, SLOT(onShuffleChanged(bool)));
-    connect(m_mprisPlayerInterface, SIGNAL(volumeChanged(double)), this, SLOT(onVolumeChanged(double)));
+    connect(m_mprisPlayerInterface, SIGNAL(asyncGetAllPropertiesFinished()), this, SLOT(onAsyncGetAllPlayerPropertiesFinished()));
+    connect(m_mprisPlayerInterface, SIGNAL(canControlChanged(bool)), this, SLOT(onCanControlChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(canGoNextChanged(bool)), this, SIGNAL(canGoNextChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(canGoPreviousChanged(bool)), this, SIGNAL(canGoPreviousChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(canPauseChanged(bool)), this, SIGNAL(canPauseChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(canPlayChanged(bool)), this, SIGNAL(canPlayChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(canSeekChanged(bool)), this, SIGNAL(canSeekChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(canSeekChanged(bool)), this, SIGNAL(canSeekChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(loopStatusChanged(QString)), this, SIGNAL(loopStatusChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(maximumRateChanged(double)), this, SIGNAL(maximumRateChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(metadataChanged(QVariantMap)), this, SIGNAL(metadataChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(minimumRateChanged(double)), this, SIGNAL(minimumRateChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(playbackStatusChanged(QString)), this, SIGNAL(playbackStatusChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(positionChanged(qlonglong)), this, SLOT(onPositionChanged(qlonglong)));
+    connect(m_mprisPlayerInterface, SIGNAL(rateChanged(double)), this, SIGNAL(rateChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(shuffleChanged(bool)), this, SIGNAL(shuffleChanged()));
+    connect(m_mprisPlayerInterface, SIGNAL(volumeChanged(double)), this, SIGNAL(volumeChanged()));
     connect(m_mprisPlayerInterface, SIGNAL(seeked(qlonglong)), this, SIGNAL(seeked(qlonglong)));
+    m_mprisPlayerInterface->setUseCache(true);
 
     // This will initialize the properties, if needed
     isValid();
@@ -101,16 +86,31 @@ MprisController::~MprisController()
 
 bool MprisController::isValid() const
 {
-    bool validNow = m_mprisRootInterface->isValid() && m_mprisPlayerInterface->isValid();
-    if (m_validated != validNow) {
-        m_validated = validNow;
-
-        // We are calling this from properties' getters so we don't want
-        // to emit a propertyChanged signals from there.
-        QTimer::singleShot(0, this, SLOT(initProperties()));
+    if (!m_mprisRootInterface->isValid() || !m_mprisPlayerInterface->isValid()) {
+        m_initedRootInterface = false;
+        m_initedPlayerInterface = false;
+        return false;
     }
 
-    return m_validated;
+    if (!m_initedRootInterface) {
+        m_mprisRootInterface->getAllProperties();
+        if (m_mprisRootInterface->lastExtendedError().isValid()) {
+            qWarning() << Q_FUNC_INFO
+                       << "Error" << m_mprisRootInterface->lastExtendedError().name()
+                       << "happened:" << m_mprisRootInterface->lastExtendedError().message();
+        }
+    }
+
+    if (!m_initedPlayerInterface) {
+        m_mprisPlayerInterface->getAllProperties();
+        if (m_mprisPlayerInterface->lastExtendedError().isValid()) {
+            qWarning() << Q_FUNC_INFO
+                       << "Error" << m_mprisPlayerInterface->lastExtendedError().name()
+                       << "happened:" << m_mprisPlayerInterface->lastExtendedError().message();
+        }
+    }
+
+    return m_initedRootInterface && m_initedPlayerInterface;
 }
 
 // Mpris2 Root Interface
@@ -172,7 +172,7 @@ bool MprisController::openUri(const QUrl &uri)
         return false;
     }
 
-    if (!m_supportedUriSchemes.contains(uri.scheme())) {
+    if (!m_mprisRootInterface->supportedUriSchemes().contains(uri.scheme())) {
         qDebug() << Q_FUNC_INFO << "The scheme is not supported";
         return false;
     }
@@ -187,7 +187,7 @@ bool MprisController::openUri(const QUrl &uri)
     QStringList mimeNames = mime.aliases();
     mimeNames.prepend(mime.name());
     for (int i = 0; i < mimeNames.size(); i++) {
-        if (m_supportedMimeTypes.contains(mimeNames[i])) {
+        if (m_mprisRootInterface->supportedMimeTypes().contains(mimeNames[i])) {
             QDBusPendingReply<> reply = m_mprisPlayerInterface->OpenUri(uri.toString());
             QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
             QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
@@ -282,7 +282,7 @@ bool MprisController::setPosition(qlonglong position)
         return false;
     }
 
-    QVariant trackId = m_metadata[Mpris::metadataToString(Mpris::TrackId)];
+    QVariant trackId = m_mprisPlayerInterface->metadata()[Mpris::metadataToString(Mpris::TrackId)];
     if (!trackId.isValid()) {
         qDebug() << Q_FUNC_INFO << "Unknown trackId in which to set the position";
         return false;
@@ -304,7 +304,7 @@ bool MprisController::setPosition(const QString &aTrackId, qlonglong position)
         return false;
     }
 
-    QVariant length = m_metadata[Mpris::metadataToString(Mpris::Length)];
+    QVariant length = m_mprisPlayerInterface->metadata()[Mpris::metadataToString(Mpris::Length)];
     if (!length.isValid()) {
         qlonglong reportedLength = length.toLongLong();
 
@@ -349,7 +349,7 @@ QString MprisController::service() const
 bool MprisController::canQuit() const
 {
     if (isValid()) {
-        return m_canQuit;
+        return m_mprisRootInterface->canQuit();
     }
 
     return false;
@@ -358,7 +358,7 @@ bool MprisController::canQuit() const
 bool MprisController::canRaise() const
 {
     if (isValid()) {
-        return m_canRaise;
+        return m_mprisRootInterface->canRaise();
     }
 
     return false;
@@ -367,7 +367,7 @@ bool MprisController::canRaise() const
 bool MprisController::canSetFullscreen() const
 {
     if (isValid()) {
-        return m_canSetFullscreen;
+        return m_mprisRootInterface->canSetFullscreen();
     }
 
     return false;
@@ -376,7 +376,7 @@ bool MprisController::canSetFullscreen() const
 QString MprisController::desktopEntry() const
 {
     if (isValid()) {
-        return m_desktopEntry;
+        return m_mprisRootInterface->desktopEntry();
     }
 
     return QString();
@@ -385,7 +385,7 @@ QString MprisController::desktopEntry() const
 bool MprisController::fullscreen() const
 {
     if (isValid()) {
-        return m_fullscreen;
+        return m_mprisRootInterface->fullscreen();
     }
 
     return false;
@@ -401,7 +401,7 @@ void MprisController::setFullscreen(bool fullscreen)
 bool MprisController::hasTrackList() const
 {
     if (isValid()) {
-        return m_hasTrackList;
+        return m_mprisRootInterface->hasTrackList();
     }
 
     return false;
@@ -410,7 +410,7 @@ bool MprisController::hasTrackList() const
 QString MprisController::identity() const
 {
     if (isValid()) {
-        return m_identity;
+        return m_mprisRootInterface->identity();
     }
 
     return QString();
@@ -419,7 +419,7 @@ QString MprisController::identity() const
 QStringList MprisController::supportedUriSchemes() const
 {
     if (isValid()) {
-        return m_supportedUriSchemes;
+        return m_mprisRootInterface->supportedUriSchemes();
     }
 
     return QStringList();
@@ -428,7 +428,7 @@ QStringList MprisController::supportedUriSchemes() const
 QStringList MprisController::supportedMimeTypes() const
 {
     if (isValid()) {
-        return m_supportedMimeTypes;
+        return m_mprisRootInterface->supportedMimeTypes();
     }
 
     return QStringList();
@@ -438,7 +438,7 @@ QStringList MprisController::supportedMimeTypes() const
 bool MprisController::canControl() const
 {
     if (isValid()) {
-        return m_canControl;
+        return m_mprisPlayerInterface->canControl();
     }
 
     return false;
@@ -446,8 +446,8 @@ bool MprisController::canControl() const
 
 bool MprisController::canGoNext() const
 {
-    if (isValid()) {
-        return m_canGoNext;
+    if (isValid() && canControl()) {
+        return m_mprisPlayerInterface->canGoNext();
     }
 
     return false;
@@ -455,8 +455,8 @@ bool MprisController::canGoNext() const
 
 bool MprisController::canGoPrevious() const
 {
-    if (isValid()) {
-        return m_canGoPrevious;
+    if (isValid() && canControl()) {
+        return m_mprisPlayerInterface->canGoPrevious();
     }
 
     return false;
@@ -464,8 +464,8 @@ bool MprisController::canGoPrevious() const
 
 bool MprisController::canPause() const
 {
-    if (isValid()) {
-        return m_canPause;
+    if (isValid() && canControl()) {
+        return m_mprisPlayerInterface->canPause();
     }
 
     return false;
@@ -473,8 +473,8 @@ bool MprisController::canPause() const
 
 bool MprisController::canPlay() const
 {
-    if (isValid()) {
-        return m_canPlay;
+    if (isValid() && canControl()) {
+        return m_mprisPlayerInterface->canPlay();
     }
 
     return false;
@@ -482,8 +482,8 @@ bool MprisController::canPlay() const
 
 bool MprisController::canSeek() const
 {
-    if (isValid()) {
-        return m_canSeek;
+    if (isValid() && canControl()) {
+        return m_mprisPlayerInterface->canSeek();
     }
 
     return false;
@@ -492,7 +492,7 @@ bool MprisController::canSeek() const
 Mpris::LoopStatus MprisController::loopStatus() const
 {
     if (isValid()) {
-        return m_loopStatus;
+        return Mpris::enumerationFromString<Mpris::LoopStatus>(m_mprisPlayerInterface->loopStatus());
     }
 
     return Mpris::None;
@@ -508,7 +508,7 @@ void MprisController::setLoopStatus(Mpris::LoopStatus loopStatus)
 double MprisController::maximumRate() const
 {
     if (isValid()) {
-        return m_maximumRate;
+        return m_mprisPlayerInterface->maximumRate();
     }
 
     return 1;
@@ -517,7 +517,7 @@ double MprisController::maximumRate() const
 QVariantMap MprisController::metadata() const
 {
     if (isValid()) {
-        return m_typedMetadata;
+        return m_mprisPlayerInterface->metadata();
     }
 
     return QVariantMap();
@@ -526,7 +526,7 @@ QVariantMap MprisController::metadata() const
 double MprisController::minimumRate() const
 {
     if (isValid()) {
-        return m_minimumRate;
+        return m_mprisPlayerInterface->minimumRate();
     }
 
     return 1;
@@ -535,7 +535,7 @@ double MprisController::minimumRate() const
 Mpris::PlaybackStatus MprisController::playbackStatus() const
 {
     if (isValid()) {
-        return m_playbackStatus;
+        return Mpris::enumerationFromString<Mpris::PlaybackStatus>(m_mprisPlayerInterface->playbackStatus());
     }
 
     return Mpris::Stopped;
@@ -544,16 +544,40 @@ Mpris::PlaybackStatus MprisController::playbackStatus() const
 qlonglong MprisController::position() const
 {
     if (isValid()) {
-        return m_mprisPlayerInterface->position();
+        m_mprisPlayerInterface->setSync(true);
+        m_mprisPlayerInterface->setUseCache(false);
+        qlonglong result = m_mprisPlayerInterface->position();
+        m_mprisPlayerInterface->setUseCache(true);
+        m_mprisPlayerInterface->setSync(false);
+        return result;
     }
 
     return -1;
 }
 
+void MprisController::requestPosition() const
+{
+    if (m_requestedPosition) {
+        return;
+    }
+
+    if (isValid()) {
+        m_mprisPlayerInterface->setUseCache(false);
+        m_mprisPlayerInterface->position();
+        m_mprisPlayerInterface->setUseCache(true);
+        if (m_mprisPlayerInterface->lastExtendedError().isValid()) {
+            qWarning() << Q_FUNC_INFO
+                       << "Failed requesting the current position in the MPRIS2 Player Interface!!!";
+            return;
+        }
+        m_requestedPosition = true;
+    }
+}
+
 double MprisController::rate() const
 {
     if (isValid()) {
-        return m_rate;
+        return m_mprisPlayerInterface->rate();
     }
 
     return 1;
@@ -569,7 +593,7 @@ void MprisController::setRate(double rate)
 bool MprisController::shuffle() const
 {
     if (isValid()) {
-        return m_shuffle;
+        return m_mprisPlayerInterface->shuffle();
     }
 
     return false;
@@ -585,7 +609,7 @@ void MprisController::setShuffle(bool shuffle)
 double MprisController::volume() const
 {
     if (isValid()) {
-        return m_volume;
+        return m_mprisPlayerInterface->volume();
     }
 
     return 0;
@@ -601,281 +625,65 @@ void MprisController::setVolume(double volume)
 
 // Protected
 
-void MprisController::onCanQuitChanged(bool aCanQuit)
+void MprisController::onAsyncGetAllRootPropertiesFinished()
 {
-    bool canQuit = m_validated ? aCanQuit : false;
-    if (m_canQuit != canQuit) {
-        m_canQuit = canQuit;
-        emit canQuitChanged();
+    if (m_mprisRootInterface->lastExtendedError().isValid()) {
+        qWarning() << Q_FUNC_INFO
+                   << "Error" << m_mprisRootInterface->lastExtendedError().name()
+                   << "happened:" << m_mprisRootInterface->lastExtendedError().message();
+        return;
     }
+
+    m_initedRootInterface = true;
 }
 
-void MprisController::onCanRaiseChanged(bool aCanRaise)
+void MprisController::onAsyncGetAllPlayerPropertiesFinished()
 {
-    bool canRaise = m_validated ? aCanRaise : false;
-    if (m_canRaise != canRaise) {
-        m_canRaise = canRaise;
-        emit canRaiseChanged();
+    if (m_mprisPlayerInterface->lastExtendedError().isValid()) {
+        qWarning() << Q_FUNC_INFO
+                   << "Error" << m_mprisPlayerInterface->lastExtendedError().name()
+                   << "happened:" << m_mprisPlayerInterface->lastExtendedError().message();
+        return;
     }
+
+    m_initedPlayerInterface = true;
 }
 
-void MprisController::onCanSetFullscreenChanged(bool aCanSetFullscreen)
+void MprisController::onCanControlChanged()
 {
-    bool canSetFullscreen = m_validated ? aCanSetFullscreen : false;
-    if (m_canSetFullscreen != canSetFullscreen) {
-        m_canSetFullscreen = canSetFullscreen;
-        emit canSetFullscreenChanged();
-    }
-}
-
-void MprisController::onDesktopEntryChanged(const QString &aDesktopEntry)
-{
-    QString desktopEntry = m_validated ? aDesktopEntry : QString();
-    if (m_desktopEntry != desktopEntry) {
-        m_desktopEntry = desktopEntry;
-        emit desktopEntryChanged();
-    }
-}
-
-void MprisController::onFullscreenChanged(bool aFullscreen)
-{
-    bool fullscreen = m_validated ? aFullscreen : false;
-    if (m_fullscreen != fullscreen) {
-        m_fullscreen = fullscreen;
-        emit fullscreenChanged();
-    }
-}
-
-void MprisController::onHasTrackListChanged(bool aHasTrackList)
-{
-    bool hasTrackList = m_validated ? aHasTrackList : false;
-    if (m_hasTrackList != hasTrackList) {
-        m_hasTrackList = hasTrackList;
-        emit hasTrackListChanged();
-    }
-}
-
-void MprisController::onIdentityChanged(const QString &aIdentity)
-{
-    QString identity = m_validated ? aIdentity : QString();
-    if (m_identity != identity) {
-        m_identity = identity;
-        emit identityChanged();
-    }
-}
-
-void MprisController::onSupportedUriSchemesChanged(const QStringList &aSupportedUriSchemes)
-{
-    QStringList supportedUriSchemes = m_validated ? aSupportedUriSchemes : QStringList();
-    if (m_supportedUriSchemes != supportedUriSchemes) {
-        m_supportedUriSchemes = supportedUriSchemes;
-        emit supportedUriSchemesChanged();
-    }
-}
-
-void MprisController::onSupportedMimeTypesChanged(const QStringList &aSupportedMimeTypes)
-{
-    QStringList supportedMimeTypes = m_validated ? aSupportedMimeTypes : QStringList();
-    if (m_supportedMimeTypes != supportedMimeTypes) {
-        m_supportedMimeTypes = supportedMimeTypes;
-        emit supportedMimeTypesChanged();
-    }
-}
-
-void MprisController::onCanGoNextChanged(bool aCanGoNext)
-{
-    bool canGoNext = m_validated && m_canControl ? aCanGoNext : false;
-    if (m_canGoNext != canGoNext) {
-        m_canGoNext = canGoNext;
+    // On first reception, we are using a "GetAll" so we can skip this
+    if (m_canControlReceived) {
+        // I could disconnect and re-connect the signals so I avoid
+        // double arriving signals but this really shouldn't happen
+        // ever.
         emit canGoNextChanged();
-    }
-}
-
-void MprisController::onCanGoPreviousChanged(bool aCanGoPrevious)
-{
-    bool canGoPrevious = m_validated && m_canControl ? aCanGoPrevious : false;
-    if (m_canGoPrevious != canGoPrevious) {
-        m_canGoPrevious = canGoPrevious;
         emit canGoPreviousChanged();
-    }
-}
-
-void MprisController::onCanPauseChanged(bool aCanPause)
-{
-    bool canPause = m_validated && m_canControl ? aCanPause : false;
-    if (m_canPause != canPause) {
-        m_canPause = canPause;
         emit canPauseChanged();
-    }
-}
-
-void MprisController::onCanPlayChanged(bool aCanPlay)
-{
-    bool canPlay = m_validated && m_canControl ? aCanPlay : false;
-    if (m_canPlay != canPlay) {
-        m_canPlay = canPlay;
         emit canPlayChanged();
-    }
-}
-
-void MprisController::onCanSeekChanged(bool aCanSeek)
-{
-    bool canSeek = m_validated && m_canControl ? aCanSeek : false;
-    if (m_canSeek != canSeek) {
-        m_canSeek = canSeek;
         emit canSeekChanged();
+        qWarning() << Q_FUNC_INFO
+                   << "CanControl is not supposed to change its value!";
+        return;
     }
+
+    m_canControlReceived = true;
 }
 
-void MprisController::onLoopStatusChanged(const QString &aLoopStatus)
+void MprisController::onPositionChanged(qlonglong aPosition)
 {
-    Mpris::LoopStatus loopStatus = m_validated ? Mpris::enumerationFromString<Mpris::LoopStatus>(aLoopStatus) : Mpris::None;
-    if (m_loopStatus != loopStatus) {
-        m_loopStatus = loopStatus;
-        emit loopStatusChanged();
-    }
-}
-
-void MprisController::onMaximumRateChanged(double aMaximumRate)
-{
-    double maximumRate = m_validated ? aMaximumRate : 1;
-    if (m_maximumRate != maximumRate) {
-        m_maximumRate = maximumRate;
-        emit maximumRateChanged();
-    }
-}
-
-void MprisController::onMetadataChanged(const QVariantMap &aMetadata)
-{
-    QVariantMap metadata = m_validated ? aMetadata : QVariantMap();
-    if (m_metadata != metadata) {
-        m_metadata = metadata;
-        emit metadataChanged();
-    }
-}
-
-void MprisController::onMinimumRateChanged(double aMinimumRate)
-{
-    double minimumRate = m_validated ? aMinimumRate : 1;
-    if (m_minimumRate != minimumRate) {
-        m_minimumRate = minimumRate;
-        emit minimumRateChanged();
-    }
-}
-
-void MprisController::onPlaybackStatusChanged(const QString &aPlaybackStatus)
-{
-    Mpris::PlaybackStatus playbackStatus = m_validated ? Mpris::enumerationFromString<Mpris::PlaybackStatus>(aPlaybackStatus) : Mpris::Stopped;
-    if (m_playbackStatus != playbackStatus) {
-        m_playbackStatus = playbackStatus;
-        emit playbackStatusChanged();
-    }
-}
-
-void MprisController::onRateChanged(double aRate)
-{
-    double rate = m_validated ? aRate : 1;
-    if (m_rate != rate) {
-        m_rate = rate;
-        emit rateChanged();
-    }
-}
-
-void MprisController::onShuffleChanged(bool aShuffle)
-{
-    bool shuffle = m_validated ? aShuffle : false;
-    if (m_shuffle != shuffle) {
-        m_shuffle = shuffle;
-        emit shuffleChanged();
-    }
-}
-
-void MprisController::onVolumeChanged(double aVolume)
-{
-    double volume = m_validated ? aVolume : 0;
-    if (m_volume != volume) {
-        m_volume = volume;
-        emit volumeChanged();
-    }
+    m_requestedPosition = false;
+    emit positionChanged(aPosition);
 }
 
 
 // Private
-
-void MprisController::initCanControl(bool aCanControl)
-{
-    bool canControl = m_validated ? aCanControl : false;
-    if (m_canControl != canControl) {
-        m_canControl = canControl;
-        emit canControlChanged();
-    }
-}
-
-void MprisController::initProperties()
-{
-    if (m_validated) {
-        onCanQuitChanged(m_mprisRootInterface->canQuit());
-        onCanRaiseChanged(m_mprisRootInterface->canRaise());
-        onCanSetFullscreenChanged(m_mprisRootInterface->canSetFullscreen());
-        onDesktopEntryChanged(m_mprisRootInterface->desktopEntry());
-        onFullscreenChanged(m_mprisRootInterface->fullscreen());
-        onHasTrackListChanged(m_mprisRootInterface->hasTrackList());
-        onIdentityChanged(m_mprisRootInterface->identity());
-        onSupportedUriSchemesChanged(m_mprisRootInterface->supportedUriSchemes());
-        onSupportedMimeTypesChanged(m_mprisRootInterface->supportedMimeTypes());
-        // Order matters
-        initCanControl(m_mprisPlayerInterface->canControl());
-        if (m_canControl) {
-            onCanGoNextChanged(m_mprisPlayerInterface->canGoNext());
-            onCanGoPreviousChanged(m_mprisPlayerInterface->canGoPrevious());
-            onCanPauseChanged(m_mprisPlayerInterface->canPause());
-            onCanPlayChanged(m_mprisPlayerInterface->canPlay());
-            onCanSeekChanged(m_mprisPlayerInterface->canSeek());
-        }
-        onLoopStatusChanged(m_mprisPlayerInterface->loopStatus());
-        onMaximumRateChanged(m_mprisPlayerInterface->maximumRate());
-        onMetadataChanged(m_mprisPlayerInterface->metadata());
-        onMinimumRateChanged(m_mprisPlayerInterface->minimumRate());
-        onPlaybackStatusChanged(m_mprisPlayerInterface->playbackStatus());
-        onRateChanged(m_mprisPlayerInterface->rate());
-        onShuffleChanged(m_mprisPlayerInterface->shuffle());
-        onVolumeChanged(m_mprisPlayerInterface->volume());
-    } else {
-        onCanQuitChanged(false);
-        onCanRaiseChanged(false);
-        onCanSetFullscreenChanged(false);
-        onDesktopEntryChanged(QString());
-        onFullscreenChanged(false);
-        onHasTrackListChanged(false);
-        onIdentityChanged(QString());
-        onSupportedUriSchemesChanged(QStringList());
-        onSupportedMimeTypesChanged(QStringList());
-        m_canControl = false;
-        onLoopStatusChanged(Mpris::enumerationToString(Mpris::None));
-        onMaximumRateChanged(1);
-        onMetadataChanged(QVariantMap());
-        onMinimumRateChanged(1);
-        onPlaybackStatusChanged(Mpris::enumerationToString(Mpris::Stopped));
-        onRateChanged(1);
-        onShuffleChanged(false);
-        onVolumeChanged(0);
-    }
-
-    if (!m_canControl) {
-        onCanGoNextChanged(false);
-        onCanGoPreviousChanged(false);
-        onCanPauseChanged(false);
-        onCanPlayChanged(false);
-        onCanSeekChanged(false);
-    }
-}
 
 void MprisController::onFinishedPendingCall(QDBusPendingCallWatcher *call)
 {
     QDBusPendingReply<> reply = *call;
     if (reply.isError()) {
         qWarning() << Q_FUNC_INFO
-                   <<"Error" << reply.error().name()
+                   << "Error" << reply.error().name()
                    << "happened:" << reply.error().message();
     }
 

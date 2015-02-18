@@ -18,5 +18,4 @@ $ qmake && make && make install
 TO-DO:
 ------
 
-* Make the controller asynchronous.
 * Implement the optional [Tracklist](http://specifications.freedesktop.org/mpris-spec/latest/Track_List_Interface.html) and [Playlists](http://specifications.freedesktop.org/mpris-spec/latest/Playlists_Interface.html) interfaces.
