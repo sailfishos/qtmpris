@@ -514,33 +514,33 @@ void MprisManager::setCurrentController(QSharedPointer<MprisController> controll
 
     if (!m_currentController.isNull()) {
         // Mpris Root Interface
-        disconnect(m_currentController.data(), SIGNAL(canQuitChanged()), this, SIGNAL(canQuitChanged()));
-        disconnect(m_currentController.data(), SIGNAL(canRaiseChanged()), this, SIGNAL(canRaiseChanged()));
-        disconnect(m_currentController.data(), SIGNAL(canSetFullscreenChanged()), this, SIGNAL(canSetFullscreenChanged()));
-        disconnect(m_currentController.data(), SIGNAL(desktopEntryChanged()), this, SIGNAL(desktopEntryChanged()));
-        disconnect(m_currentController.data(), SIGNAL(fullscreenChanged()), this, SIGNAL(fullscreenChanged()));
-        disconnect(m_currentController.data(), SIGNAL(hasTrackListChanged()), this, SIGNAL(hasTrackListChanged()));
-        disconnect(m_currentController.data(), SIGNAL(identityChanged()), this, SIGNAL(identityChanged()));
-        disconnect(m_currentController.data(), SIGNAL(supportedUriSchemesChanged()), this, SIGNAL(supportedUriSchemesChanged()));
-        disconnect(m_currentController.data(), SIGNAL(supportedMimeTypesChanged()), this, SIGNAL(supportedMimeTypesChanged()));
+        disconnect(m_currentController.data(), &MprisController::canQuitChanged, this, &MprisManager::canQuitChanged);
+        disconnect(m_currentController.data(), &MprisController::canRaiseChanged, this, &MprisManager::canRaiseChanged);
+        disconnect(m_currentController.data(), &MprisController::canSetFullscreenChanged, this, &MprisManager::canSetFullscreenChanged);
+        disconnect(m_currentController.data(), &MprisController::desktopEntryChanged, this, &MprisManager::desktopEntryChanged);
+        disconnect(m_currentController.data(), &MprisController::fullscreenChanged, this, &MprisManager::fullscreenChanged);
+        disconnect(m_currentController.data(), &MprisController::hasTrackListChanged, this, &MprisManager::hasTrackListChanged);
+        disconnect(m_currentController.data(), &MprisController::identityChanged, this, &MprisManager::identityChanged);
+        disconnect(m_currentController.data(), &MprisController::supportedUriSchemesChanged, this, &MprisManager::supportedUriSchemesChanged);
+        disconnect(m_currentController.data(), &MprisController::supportedMimeTypesChanged, this, &MprisManager::supportedMimeTypesChanged);
 
         // Mpris Player Interface
-        disconnect(m_currentController.data(), SIGNAL(canControlChanged()), this, SIGNAL(canControlChanged()));
-        disconnect(m_currentController.data(), SIGNAL(canGoNextChanged()), this, SIGNAL(canGoNextChanged()));
-        disconnect(m_currentController.data(), SIGNAL(canGoPreviousChanged()), this, SIGNAL(canGoPreviousChanged()));
-        disconnect(m_currentController.data(), SIGNAL(canPauseChanged()), this, SIGNAL(canPauseChanged()));
-        disconnect(m_currentController.data(), SIGNAL(canPlayChanged()), this, SIGNAL(canPlayChanged()));
-        disconnect(m_currentController.data(), SIGNAL(canSeekChanged()), this, SIGNAL(canSeekChanged()));
-        disconnect(m_currentController.data(), SIGNAL(loopStatusChanged()), this, SIGNAL(loopStatusChanged()));
-        disconnect(m_currentController.data(), SIGNAL(maximumRateChanged()), this, SIGNAL(maximumRateChanged()));
-        disconnect(m_currentController.data(), SIGNAL(metadataChanged()), this, SIGNAL(metadataChanged()));
-        disconnect(m_currentController.data(), SIGNAL(minimumRateChanged()), this, SIGNAL(minimumRateChanged()));
-        disconnect(m_currentController.data(), SIGNAL(playbackStatusChanged()), this, SIGNAL(playbackStatusChanged()));
-        disconnect(m_currentController.data(), SIGNAL(positionChanged(qlonglong)), this, SIGNAL(positionChanged(qlonglong)));
-        disconnect(m_currentController.data(), SIGNAL(rateChanged()), this, SIGNAL(rateChanged()));
-        disconnect(m_currentController.data(), SIGNAL(shuffleChanged()), this, SIGNAL(shuffleChanged()));
-        disconnect(m_currentController.data(), SIGNAL(volumeChanged()), this, SIGNAL(volumeChanged()));
-        disconnect(m_currentController.data(), SIGNAL(seeked(qlonglong)), this, SIGNAL(seeked(qlonglong)));
+        disconnect(m_currentController.data(), &MprisController::canControlChanged, this, &MprisManager::canControlChanged);
+        disconnect(m_currentController.data(), &MprisController::canGoNextChanged, this, &MprisManager::canGoNextChanged);
+        disconnect(m_currentController.data(), &MprisController::canGoPreviousChanged, this, &MprisManager::canGoPreviousChanged);
+        disconnect(m_currentController.data(), &MprisController::canPauseChanged, this, &MprisManager::canPauseChanged);
+        disconnect(m_currentController.data(), &MprisController::canPlayChanged, this, &MprisManager::canPlayChanged);
+        disconnect(m_currentController.data(), &MprisController::canSeekChanged, this, &MprisManager::canSeekChanged);
+        disconnect(m_currentController.data(), &MprisController::loopStatusChanged, this, &MprisManager::loopStatusChanged);
+        disconnect(m_currentController.data(), &MprisController::maximumRateChanged, this, &MprisManager::maximumRateChanged);
+        disconnect(m_currentController.data(), &MprisController::metadataChanged, this, &MprisManager::metadataChanged);
+        disconnect(m_currentController.data(), &MprisController::minimumRateChanged, this, &MprisManager::minimumRateChanged);
+        disconnect(m_currentController.data(), &MprisController::playbackStatusChanged, this, &MprisManager::playbackStatusChanged);
+        disconnect(m_currentController.data(), &MprisController::positionChanged, this, &MprisManager::positionChanged);
+        disconnect(m_currentController.data(), &MprisController::rateChanged, this, &MprisManager::rateChanged);
+        disconnect(m_currentController.data(), &MprisController::shuffleChanged, this, &MprisManager::shuffleChanged);
+        disconnect(m_currentController.data(), &MprisController::volumeChanged, this, &MprisManager::volumeChanged);
+        disconnect(m_currentController.data(), &MprisController::seeked, this, &MprisManager::seeked);
 
         if (m_currentController->playbackStatus() == Mpris::Playing) {
             m_otherPlayingControllers.prepend(m_currentController);
@@ -551,32 +551,32 @@ void MprisManager::setCurrentController(QSharedPointer<MprisController> controll
 
     if (!m_currentController.isNull()) {
         // Mpris Root Interface
-        connect(m_currentController.data(), SIGNAL(canQuitChanged()), this, SIGNAL(canQuitChanged()));
-        connect(m_currentController.data(), SIGNAL(canRaiseChanged()), this, SIGNAL(canRaiseChanged()));
-        connect(m_currentController.data(), SIGNAL(canSetFullscreenChanged()), this, SIGNAL(canSetFullscreenChanged()));
-        connect(m_currentController.data(), SIGNAL(desktopEntryChanged()), this, SIGNAL(desktopEntryChanged()));
-        connect(m_currentController.data(), SIGNAL(fullscreenChanged()), this, SIGNAL(fullscreenChanged()));
-        connect(m_currentController.data(), SIGNAL(hasTrackListChanged()), this, SIGNAL(hasTrackListChanged()));
-        connect(m_currentController.data(), SIGNAL(identityChanged()), this, SIGNAL(identityChanged()));
-        connect(m_currentController.data(), SIGNAL(supportedUriSchemesChanged()), this, SIGNAL(supportedUriSchemesChanged()));
-        connect(m_currentController.data(), SIGNAL(supportedMimeTypesChanged()), this, SIGNAL(supportedMimeTypesChanged()));
-        connect(m_currentController.data(), SIGNAL(canControlChanged()), this, SIGNAL(canControlChanged()));
+        connect(m_currentController.data(), &MprisController::canQuitChanged, this, &MprisManager::canQuitChanged);
+        connect(m_currentController.data(), &MprisController::canRaiseChanged, this, &MprisManager::canRaiseChanged);
+        connect(m_currentController.data(), &MprisController::canSetFullscreenChanged, this, &MprisManager::canSetFullscreenChanged);
+        connect(m_currentController.data(), &MprisController::desktopEntryChanged, this, &MprisManager::desktopEntryChanged);
+        connect(m_currentController.data(), &MprisController::fullscreenChanged, this, &MprisManager::fullscreenChanged);
+        connect(m_currentController.data(), &MprisController::hasTrackListChanged, this, &MprisManager::hasTrackListChanged);
+        connect(m_currentController.data(), &MprisController::identityChanged, this, &MprisManager::identityChanged);
+        connect(m_currentController.data(), &MprisController::supportedUriSchemesChanged, this, &MprisManager::supportedUriSchemesChanged);
+        connect(m_currentController.data(), &MprisController::supportedMimeTypesChanged, this, &MprisManager::supportedMimeTypesChanged);
+        connect(m_currentController.data(), &MprisController::canControlChanged, this, &MprisManager::canControlChanged);
 
         // Mpris Player Interface
-        connect(m_currentController.data(), SIGNAL(canGoNextChanged()), this, SIGNAL(canGoNextChanged()));
-        connect(m_currentController.data(), SIGNAL(canGoPreviousChanged()), this, SIGNAL(canGoPreviousChanged()));
-        connect(m_currentController.data(), SIGNAL(canPauseChanged()), this, SIGNAL(canPauseChanged()));
-        connect(m_currentController.data(), SIGNAL(canPlayChanged()), this, SIGNAL(canPlayChanged()));
-        connect(m_currentController.data(), SIGNAL(canSeekChanged()), this, SIGNAL(canSeekChanged()));
-        connect(m_currentController.data(), SIGNAL(loopStatusChanged()), this, SIGNAL(loopStatusChanged()));
-        connect(m_currentController.data(), SIGNAL(maximumRateChanged()), this, SIGNAL(maximumRateChanged()));
-        connect(m_currentController.data(), SIGNAL(metadataChanged()), this, SIGNAL(metadataChanged()));
-        connect(m_currentController.data(), SIGNAL(minimumRateChanged()), this, SIGNAL(minimumRateChanged()));
-        connect(m_currentController.data(), SIGNAL(playbackStatusChanged()), this, SIGNAL(playbackStatusChanged()));
-        connect(m_currentController.data(), SIGNAL(rateChanged()), this, SIGNAL(rateChanged()));
-        connect(m_currentController.data(), SIGNAL(shuffleChanged()), this, SIGNAL(shuffleChanged()));
-        connect(m_currentController.data(), SIGNAL(volumeChanged()), this, SIGNAL(volumeChanged()));
-        connect(m_currentController.data(), SIGNAL(seeked(qlonglong)), this, SIGNAL(seeked(qlonglong)));
+        connect(m_currentController.data(), &MprisController::canGoNextChanged, this, &MprisManager::canGoNextChanged);
+        connect(m_currentController.data(), &MprisController::canGoPreviousChanged, this, &MprisManager::canGoPreviousChanged);
+        connect(m_currentController.data(), &MprisController::canPauseChanged, this, &MprisManager::canPauseChanged);
+        connect(m_currentController.data(), &MprisController::canPlayChanged, this, &MprisManager::canPlayChanged);
+        connect(m_currentController.data(), &MprisController::canSeekChanged, this, &MprisManager::canSeekChanged);
+        connect(m_currentController.data(), &MprisController::loopStatusChanged, this, &MprisManager::loopStatusChanged);
+        connect(m_currentController.data(), &MprisController::maximumRateChanged, this, &MprisManager::maximumRateChanged);
+        connect(m_currentController.data(), &MprisController::metadataChanged, this, &MprisManager::metadataChanged);
+        connect(m_currentController.data(), &MprisController::minimumRateChanged, this, &MprisManager::minimumRateChanged);
+        connect(m_currentController.data(), &MprisController::playbackStatusChanged, this, &MprisManager::playbackStatusChanged);
+        connect(m_currentController.data(), &MprisController::rateChanged, this, &MprisManager::rateChanged);
+        connect(m_currentController.data(), &MprisController::shuffleChanged, this, &MprisManager::shuffleChanged);
+        connect(m_currentController.data(), &MprisController::volumeChanged, this, &MprisManager::volumeChanged);
+        connect(m_currentController.data(), &MprisController::seeked, this, &MprisManager::seeked);
 
         if (m_currentController->playbackStatus() == Mpris::Playing) {
             m_otherPlayingControllers.removeOne(m_currentController);

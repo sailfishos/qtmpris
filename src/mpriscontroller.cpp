@@ -43,37 +43,37 @@ MprisController::MprisController(const QString &service, const QDBusConnection &
     , m_canControlReceived(false)
 {
     // Mpris Root Interface
-    connect(m_mprisRootInterface, SIGNAL(asyncGetAllPropertiesFinished()), this, SLOT(onAsyncGetAllRootPropertiesFinished()));
-    connect(m_mprisRootInterface, SIGNAL(canQuitChanged(bool)), this, SIGNAL(canQuitChanged()));
-    connect(m_mprisRootInterface, SIGNAL(canRaiseChanged(bool)), this, SIGNAL(canRaiseChanged()));
-    connect(m_mprisRootInterface, SIGNAL(canSetFullscreenChanged(bool)), this, SIGNAL(canSetFullscreenChanged()));
-    connect(m_mprisRootInterface, SIGNAL(desktopEntryChanged(QString)), this, SIGNAL(desktopEntryChanged()));
-    connect(m_mprisRootInterface, SIGNAL(fullscreenChanged(bool)), this, SIGNAL(fullscreenChanged()));
-    connect(m_mprisRootInterface, SIGNAL(hasTrackListChanged(bool)), this, SIGNAL(hasTrackListChanged()));
-    connect(m_mprisRootInterface, SIGNAL(identityChanged(QString)), this, SIGNAL(identityChanged()));
-    connect(m_mprisRootInterface, SIGNAL(supportedMimeTypesChanged(QStringList)), this, SIGNAL(supportedMimeTypesChanged()));
-    connect(m_mprisRootInterface, SIGNAL(supportedUriSchemesChanged(QStringList)), this, SIGNAL(supportedUriSchemesChanged()));
+    connect(m_mprisRootInterface, &MprisRootInterface::asyncGetAllPropertiesFinished, this, &MprisController::onAsyncGetAllRootPropertiesFinished);
+    connect(m_mprisRootInterface, &MprisRootInterface::canQuitChanged, this, &MprisController::canQuitChanged);
+    connect(m_mprisRootInterface, &MprisRootInterface::canRaiseChanged, this, &MprisController::canRaiseChanged);
+    connect(m_mprisRootInterface, &MprisRootInterface::canSetFullscreenChanged, this, &MprisController::canSetFullscreenChanged);
+    connect(m_mprisRootInterface, &MprisRootInterface::desktopEntryChanged, this, &MprisController::desktopEntryChanged);
+    connect(m_mprisRootInterface, &MprisRootInterface::fullscreenChanged, this, &MprisController::fullscreenChanged);
+    connect(m_mprisRootInterface, &MprisRootInterface::hasTrackListChanged, this, &MprisController::hasTrackListChanged);
+    connect(m_mprisRootInterface, &MprisRootInterface::identityChanged, this, &MprisController::identityChanged);
+    connect(m_mprisRootInterface, &MprisRootInterface::supportedMimeTypesChanged, this, &MprisController::supportedMimeTypesChanged);
+    connect(m_mprisRootInterface, &MprisRootInterface::supportedUriSchemesChanged, this, &MprisController::supportedUriSchemesChanged);
     m_mprisRootInterface->setUseCache(true);
 
     // Mpris Player Interface
-    connect(m_mprisPlayerInterface, SIGNAL(asyncGetAllPropertiesFinished()), this, SLOT(onAsyncGetAllPlayerPropertiesFinished()));
-    connect(m_mprisPlayerInterface, SIGNAL(canControlChanged(bool)), this, SLOT(onCanControlChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(canGoNextChanged(bool)), this, SIGNAL(canGoNextChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(canGoPreviousChanged(bool)), this, SIGNAL(canGoPreviousChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(canPauseChanged(bool)), this, SIGNAL(canPauseChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(canPlayChanged(bool)), this, SIGNAL(canPlayChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(canSeekChanged(bool)), this, SIGNAL(canSeekChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(canSeekChanged(bool)), this, SIGNAL(canSeekChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(loopStatusChanged(QString)), this, SIGNAL(loopStatusChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(maximumRateChanged(double)), this, SIGNAL(maximumRateChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(metadataChanged(QVariantMap)), this, SIGNAL(metadataChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(minimumRateChanged(double)), this, SIGNAL(minimumRateChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(playbackStatusChanged(QString)), this, SIGNAL(playbackStatusChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(positionChanged(qlonglong)), this, SLOT(onPositionChanged(qlonglong)));
-    connect(m_mprisPlayerInterface, SIGNAL(rateChanged(double)), this, SIGNAL(rateChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(shuffleChanged(bool)), this, SIGNAL(shuffleChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(volumeChanged(double)), this, SIGNAL(volumeChanged()));
-    connect(m_mprisPlayerInterface, SIGNAL(seeked(qlonglong)), this, SIGNAL(seeked(qlonglong)));
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::asyncGetAllPropertiesFinished, this, &MprisController::onAsyncGetAllPlayerPropertiesFinished);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::canControlChanged, this, &MprisController::onCanControlChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::canGoNextChanged, this, &MprisController::canGoNextChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::canGoPreviousChanged, this, &MprisController::canGoPreviousChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::canPauseChanged, this, &MprisController::canPauseChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::canPlayChanged, this, &MprisController::canPlayChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::canSeekChanged, this, &MprisController::canSeekChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::canSeekChanged, this, &MprisController::canSeekChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::loopStatusChanged, this, &MprisController::loopStatusChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::maximumRateChanged, this, &MprisController::maximumRateChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::metadataChanged, this, &MprisController::metadataChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::minimumRateChanged, this, &MprisController::minimumRateChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::playbackStatusChanged, this, &MprisController::playbackStatusChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::positionChanged, this, &MprisController::onPositionChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::rateChanged, this, &MprisController::rateChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::shuffleChanged, this, &MprisController::shuffleChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::volumeChanged, this, &MprisController::volumeChanged);
+    connect(m_mprisPlayerInterface, &MprisPlayerInterface::seeked, this, &MprisController::seeked);
     m_mprisPlayerInterface->setUseCache(true);
 
     // This will initialize the properties, if needed
