@@ -41,7 +41,7 @@ MprisPlugin::~MprisPlugin() {
 }
 
 void MprisPlugin::registerTypes(const char *uri) {
-    qmlRegisterType<Mpris>(uri, 1, 0, "Mpris");
+    qmlRegisterSingletonType<Mpris>(uri, 1, 0, "Mpris", Mpris::api_factory);
     qmlRegisterType<MprisPlayer>(uri, 1, 0, "MprisPlayer");
     qmlRegisterType<MprisManager>(uri, 1, 0, "MprisManager");
 }
