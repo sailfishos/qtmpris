@@ -209,7 +209,7 @@ Item {
         onArtistChanged: {
             var metadata = mprisPlayer.metadata
 
-            metadata[mpris.metadataToString(Mpris.Artist)] = [artist] // List of strings
+            metadata[Mpris.metadataToString(Mpris.Artist)] = [artist] // List of strings
 
             mprisPlayer.metadata = metadata
         }
@@ -217,13 +217,9 @@ Item {
         onSongChanged: {
             var metadata = mprisPlayer.metadata
 
-            metadata[mpris.metadataToString(Mpris.Title)] = song // String
+            metadata[Mpris.metadataToString(Mpris.Title)] = song // String
 
             mprisPlayer.metadata = metadata
         }
-    }
-
-    Mpris {
-        id: mpris
     }
 }

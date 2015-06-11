@@ -40,7 +40,7 @@ Item {
             id: artistLabel
 
             text: if (mprisManager.currentService) {
-                var artistTag = mpris.metadataToString(Mpris.Artist)
+                var artistTag = Mpris.metadataToString(Mpris.Artist)
 
                 return (artistTag in mprisManager.metadata) ? mprisManager.metadata[artistTag].toString() : ""
             }
@@ -53,7 +53,7 @@ Item {
             id: songLabel
 
             text: if (mprisManager.currentService) {
-                var titleTag = mpris.metadataToString(Mpris.Title)
+                var titleTag = Mpris.metadataToString(Mpris.Title)
 
                 return (titleTag in mprisManager.metadata) ? mprisManager.metadata[titleTag].toString() : ""
             }
@@ -103,10 +103,6 @@ Item {
                 }
             }
         }
-    }
-
-    Mpris {
-        id: mpris
     }
 }
 
