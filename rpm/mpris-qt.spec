@@ -1,7 +1,7 @@
 Name:       mpris-qt5
 
 Summary:    Qt and QML MPRIS interface and adaptor
-Version:    0.0.3
+Version:    0.0.4
 Release:    1
 Group:      Development/Libraries
 License:    LGPL 2.1
