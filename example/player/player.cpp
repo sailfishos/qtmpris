@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     QGuiApplication *app = new QGuiApplication(argc, argv);
     QQuickView *view = new QQuickView;
 
-    qmlRegisterType<Mpris>("org.nemomobile.qtmpris", 1, 0, "Mpris");
+    qmlRegisterSingletonType<Mpris>("org.nemomobile.qtmpris", 1, 0, "Mpris", Mpris::api_factory);
     qmlRegisterType<MprisPlayer>("org.nemomobile.qtmpris", 1, 0, "MprisPlayer");
 
     view->setSource(app->applicationDirPath().append("/../qml/player.qml"));
