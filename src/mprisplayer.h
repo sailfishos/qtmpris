@@ -206,6 +206,7 @@ private:
     static QVariantMap typeMetadata(const QVariantMap &aMetadata);
 
     void registerService();
+    void unregisterService();
     bool notifyPropertiesChanged(const QString& interfaceName, const QVariantMap &changedProperties, const QStringList &invalidatedProperties) const;
 
     MprisRootAdaptor *m_mprisRootAdaptor;
