@@ -70,6 +70,7 @@ MprisPlayer::MprisPlayer(QObject *parent)
 
 MprisPlayer::~MprisPlayer()
 {
+    unregisterService();
 }
 
 QString MprisPlayer::serviceName() const
@@ -83,11 +84,7 @@ void MprisPlayer::setServiceName(const QString &serviceName)
         return;
     }
 
-    if (!m_serviceName.isEmpty()) {
-        QDBusConnection connection = QDBusConnection::sessionBus();
-        connection.unregisterService(QString(serviceNamePrefix).append(m_serviceName));
-    }
-
+    unregisterService();
     m_serviceName = serviceName;
     registerService();
 
@@ -546,6 +543,14 @@ void MprisPlayer::registerService()
     }
 
     return;
+}
+
+void MprisPlayer::unregisterService()
+{
+    if (!m_serviceName.isEmpty()) {
+        QDBusConnection connection = QDBusConnection::sessionBus();
+        connection.unregisterService(QString(serviceNamePrefix).append(m_serviceName));
+    }
 }
 
 bool MprisPlayer::notifyPropertiesChanged(const QString& interfaceName, const QVariantMap &changedProperties, const QStringList &invalidatedProperties) const
