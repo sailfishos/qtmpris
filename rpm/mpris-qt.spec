@@ -4,7 +4,7 @@ Summary:    Qt and QML MPRIS interface and adaptor
 Version:    0.0.5
 Release:    1
 Group:      Development/Libraries
-License:    LGPL 2.1
+License:    LGPLv2.1
 URL:        https://github.com/nemomobile/qtmpris
 Source0:    %{name}-%{version}.tar.bz2
 Requires(post): /sbin/ldconfig
@@ -18,7 +18,6 @@ BuildRequires:  pkgconfig(dbusextended-qt5) >= 0.0.2
 
 %package devel
 Summary:    Development files for %{name}
-Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 
 %description devel
@@ -26,7 +25,6 @@ Development files for %{name}.
 
 %package qml-plugin
 Summary:    QML plugin for %{name}
-Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 
 %description qml-plugin
