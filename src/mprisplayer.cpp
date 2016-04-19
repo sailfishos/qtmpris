@@ -553,17 +553,17 @@ void MprisPlayer::unregisterService()
     }
 }
 
-bool MprisPlayer::notifyPropertiesChanged(const QString& interfaceName, const QVariantMap &changedProperties, const QStringList &invalidatedProperties) const
+void MprisPlayer::notifyPropertiesChanged(const QString& interfaceName, const QVariantMap &changedProperties, const QStringList &invalidatedProperties) const
 {
     if (m_serviceName.isEmpty()) {
-        return false;
+        return;
     }
 
     QDBusConnection connection = QDBusConnection::sessionBus();
 
     if (!connection.isConnected()) {
         qmlInfo(this) << "Failed attempting to connect to DBus";
-        return false;
+        return;
     }
 
     QDBusMessage message = QDBusMessage::createSignal(mprisObjectPath,
@@ -574,5 +574,7 @@ bool MprisPlayer::notifyPropertiesChanged(const QString& interfaceName, const QV
     arguments << QVariant(interfaceName) << QVariant(changedProperties) << QVariant(invalidatedProperties);
     message.setArguments(arguments);
 
-    return connection.send(message);
+    if (!connection.send(message)) {
+        qmlInfo(this) << "Failed to send DBus property notification signal";
+    }
 }

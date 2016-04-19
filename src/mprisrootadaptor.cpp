@@ -160,9 +160,7 @@ void MprisRootAdaptor::onCanQuitChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("CanQuit")] = QVariant(player->canQuit());
 
-    if (!player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList());
 }
 
 void MprisRootAdaptor::onCanRaiseChanged() const
@@ -172,9 +170,7 @@ void MprisRootAdaptor::onCanRaiseChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("CanRaise")] = QVariant(player->canRaise());
 
-    if (!player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList());
 }
 
 void MprisRootAdaptor::onCanSetFullscreenChanged() const
@@ -184,9 +180,7 @@ void MprisRootAdaptor::onCanSetFullscreenChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("CanSetFullscreen")] = QVariant(player->canSetFullscreen());
 
-    if (!player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList());
 }
 
 void MprisRootAdaptor::onDesktopEntryChanged() const
@@ -196,9 +190,7 @@ void MprisRootAdaptor::onDesktopEntryChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("DesktopEntry")] = QVariant(player->desktopEntry());
 
-    if (!player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList());
 }
 
 void MprisRootAdaptor::onFullscreenChanged() const
@@ -208,9 +200,7 @@ void MprisRootAdaptor::onFullscreenChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("Fullscreen")] = QVariant(player->fullscreen());
 
-    if (!player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList());
 }
 
 void MprisRootAdaptor::onHasTrackListChanged() const
@@ -220,9 +210,7 @@ void MprisRootAdaptor::onHasTrackListChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("HasTrackList")] = QVariant(player->hasTrackList());
 
-    if (!player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList());
 }
 
 void MprisRootAdaptor::onIdentityChanged() const
@@ -232,9 +220,7 @@ void MprisRootAdaptor::onIdentityChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("Identity")] = QVariant(player->identity());
 
-    if (!player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList());
 }
 
 void MprisRootAdaptor::onSupportedUriSchemesChanged() const
@@ -244,9 +230,7 @@ void MprisRootAdaptor::onSupportedUriSchemesChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("SupportedUriSchemes")] = QVariant(player->supportedUriSchemes());
 
-    if (!player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList());
 }
 
 void MprisRootAdaptor::onSupportedMimeTypesChanged() const
@@ -256,7 +240,5 @@ void MprisRootAdaptor::onSupportedMimeTypesChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("SupportedMimeTypes")] = QVariant(player->supportedMimeTypes());
 
-    if (!player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisRootInterface, changedProperties, QStringList());
 }

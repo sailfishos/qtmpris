@@ -207,7 +207,7 @@ private:
 
     void registerService();
     void unregisterService();
-    bool notifyPropertiesChanged(const QString& interfaceName, const QVariantMap &changedProperties, const QStringList &invalidatedProperties) const;
+    void notifyPropertiesChanged(const QString& interfaceName, const QVariantMap &changedProperties, const QStringList &invalidatedProperties) const;
 
     MprisRootAdaptor *m_mprisRootAdaptor;
     MprisPlayerAdaptor *m_mprisPlayerAdaptor;

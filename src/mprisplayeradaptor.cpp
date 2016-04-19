@@ -475,9 +475,7 @@ void MprisPlayerAdaptor::onCanControlChanged() const
         return;
     }
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onCanGoNextChanged() const
@@ -491,9 +489,7 @@ void MprisPlayerAdaptor::onCanGoNextChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("CanGoNext")] = QVariant(player->canGoNext());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onCanGoPreviousChanged() const
@@ -507,9 +503,7 @@ void MprisPlayerAdaptor::onCanGoPreviousChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("CanGoPrevious")] = QVariant(player->canGoPrevious());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onCanPauseChanged() const
@@ -523,9 +517,7 @@ void MprisPlayerAdaptor::onCanPauseChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("CanPause")] = QVariant(player->canPause());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onCanPlayChanged() const
@@ -539,9 +531,7 @@ void MprisPlayerAdaptor::onCanPlayChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("CanPlay")] = QVariant(player->canPlay());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onCanSeekChanged() const
@@ -555,9 +545,7 @@ void MprisPlayerAdaptor::onCanSeekChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("CanSeek")] = QVariant(player->canSeek());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onLoopStatusChanged() const
@@ -567,9 +555,7 @@ void MprisPlayerAdaptor::onLoopStatusChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("LoopStatus")] = QVariant(Mpris::enumerationToString(player->loopStatus()));
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onMaximumRateChanged() const
@@ -584,9 +570,7 @@ void MprisPlayerAdaptor::onMaximumRateChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("MaximumRate")] = QVariant(player->maximumRate());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onMetadataChanged() const
@@ -596,9 +580,7 @@ void MprisPlayerAdaptor::onMetadataChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("Metadata")] = QVariant(player->metadata());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onMinimumRateChanged() const
@@ -613,9 +595,7 @@ void MprisPlayerAdaptor::onMinimumRateChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("MinimumRate")] = QVariant(player->minimumRate() < 0 ? 0 : player->minimumRate());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onPlaybackStatusChanged() const
@@ -625,9 +605,7 @@ void MprisPlayerAdaptor::onPlaybackStatusChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("PlaybackStatus")] = QVariant(Mpris::enumerationToString(player->playbackStatus()));
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onRateChanged() const
@@ -642,9 +620,7 @@ void MprisPlayerAdaptor::onRateChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("Rate")] = QVariant(player->rate());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onShuffleChanged() const
@@ -654,9 +630,7 @@ void MprisPlayerAdaptor::onShuffleChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("Shuffle")] = QVariant(player->shuffle());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
 
 void MprisPlayerAdaptor::onVolumeChanged() const
@@ -666,7 +640,5 @@ void MprisPlayerAdaptor::onVolumeChanged() const
     QVariantMap changedProperties;
     changedProperties[QStringLiteral("Volume")] = QVariant(player->volume() < 0 ? 0 : player->volume());
 
-    if (!player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList())) {
-        qmlInfo(this) << "Failed notifying change on property";
-    }
+    player->notifyPropertiesChanged(mprisPlayerInterface, changedProperties, QStringList());
 }
