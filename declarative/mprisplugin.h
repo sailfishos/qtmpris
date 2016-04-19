@@ -30,15 +30,16 @@
 #include <QtGlobal>
 
 
-class MprisPlugin : public QQmlExtensionPlugin {
-  Q_OBJECT
-  Q_PLUGIN_METADATA(IID "org.nemomobile.mpris")
+class MprisPlugin : public QQmlExtensionPlugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.nemomobile.mpris")
 
 public:
-  MprisPlugin(QObject *parent = 0);
-  ~MprisPlugin();
+    MprisPlugin(QObject *parent = 0);
+    ~MprisPlugin();
 
-  virtual void registerTypes(const char *uri);
+    virtual void registerTypes(const char *uri);
 };
 
 
