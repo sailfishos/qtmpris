@@ -66,6 +66,13 @@ MprisPlayer::MprisPlayer(QObject *parent)
     , m_shuffle(false)
     , m_volume(0)
 {
+    QDBusConnection connection = QDBusConnection::sessionBus();
+
+    if (!connection.isConnected()) {
+        qmlInfo(this) << "Failed attempting to connect to DBus";
+    } else if (!connection.registerObject(mprisObjectPath, this)) {
+        qmlInfo(this) << "Failed attempting to register object path. Already registered?";
+    }
 }
 
 MprisPlayer::~MprisPlayer()
@@ -533,13 +540,7 @@ void MprisPlayer::registerService()
     }
 
     if (!connection.registerService(QString(serviceNamePrefix).append(m_serviceName))) {
-        qmlInfo(this) << "Failed attempting to register service: " << m_serviceName << "Already taken?";
-        return;
-    }
-
-    if (!connection.registerObject(mprisObjectPath, this)) {
-        qmlInfo(this) << "Failed attempting to register object path. Already registered?";
-        return;
+        qmlInfo(this) << "Failed attempting to register service: " << m_serviceName << " Already taken?";
     }
 
     return;
