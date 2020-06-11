@@ -151,7 +151,7 @@ void MprisManager::setSingleService(bool single)
     }
 
     m_singleService = single;
-    emit singleServiceChanged();
+    Q_EMIT singleServiceChanged();
 }
 
 QString MprisManager::currentService() const
@@ -416,7 +416,7 @@ void MprisManager::onServiceAppeared(const QString &service)
 
     if (controller == m_currentController) {
         m_availableControllers.prepend(controller);
-        emit availableServicesChanged();
+        Q_EMIT availableServicesChanged();
         return;
     }
 
@@ -431,7 +431,7 @@ void MprisManager::onServiceAppeared(const QString &service)
         }
     }
 
-    emit availableServicesChanged();
+    Q_EMIT availableServicesChanged();
 }
 
 void MprisManager::onServiceVanished(const QString &service)
@@ -445,7 +445,7 @@ void MprisManager::onServiceVanished(const QString &service)
 
     if (!m_currentController.isNull() && service == m_currentController->service()) {
         if (m_singleService) {
-            emit availableServicesChanged();
+            Q_EMIT availableServicesChanged();
             return;
         }
 
@@ -456,7 +456,7 @@ void MprisManager::onServiceVanished(const QString &service)
         }
     }
 
-    emit availableServicesChanged();
+    Q_EMIT availableServicesChanged();
 }
 
 void MprisManager::onAvailableControllerPlaybackStatusChanged(const QString &service)
@@ -583,7 +583,7 @@ void MprisManager::setCurrentController(QSharedPointer<MprisController> controll
         }
     }
 
-    emit currentServiceChanged();
+    Q_EMIT currentServiceChanged();
 }
 
 bool MprisManager::checkController(const char *callerName) const

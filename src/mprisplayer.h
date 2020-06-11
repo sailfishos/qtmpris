@@ -75,7 +75,7 @@ public:
     MprisPlayer(QObject *parent = 0);
     ~MprisPlayer();
 
-public slots:
+public Q_SLOTS:
 
     QString serviceName() const;
     void setServiceName(const QString &serviceName);
@@ -154,7 +154,7 @@ public slots:
     double volume() const;
     void setVolume(double volume);
 
-signals:
+Q_SIGNALS:
     void serviceNameChanged();
 
     // Mpris2 Root Interface

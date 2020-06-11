@@ -96,7 +96,7 @@ void MprisRootAdaptor::setFullscreen(bool value)
 {
     MprisPlayer * const player = static_cast<MprisPlayer *>(parent());
     if (player->canSetFullscreen()) {
-        emit player->fullscreenRequested(value);
+        Q_EMIT player->fullscreenRequested(value);
         return;
     }
 
@@ -133,7 +133,7 @@ void MprisRootAdaptor::Quit()
 {
     MprisPlayer * const player = static_cast<MprisPlayer *>(parent());
     if (player->canQuit()) {
-        emit player->quitRequested();
+        Q_EMIT player->quitRequested();
         return;
     }
 
@@ -144,7 +144,7 @@ void MprisRootAdaptor::Raise()
 {
     MprisPlayer * const player = static_cast<MprisPlayer *>(parent());
     if (player->canRaise()) {
-        emit player->raiseRequested();
+        Q_EMIT player->raiseRequested();
         return;
     }
 

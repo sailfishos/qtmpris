@@ -101,7 +101,7 @@ public:
     bool setPosition(const QString &aTrackId, qlonglong position);
     bool stop();
 
-public slots:
+public Q_SLOTS:
 
     QString service() const;
 
@@ -161,7 +161,7 @@ public slots:
     double volume() const;
     void setVolume(double volume);
 
-signals:
+Q_SIGNALS:
 
     // Mpris2 Root Interface
     void canQuitChanged();

@@ -53,55 +53,55 @@ void MprisRootInterface::onPropertyChanged(const QString &propertyName, const QV
         bool canQuit = value.toBool();
         if (m_canQuit != canQuit) {
             m_canQuit = canQuit;
-            emit canQuitChanged(m_canQuit);
+            Q_EMIT canQuitChanged(m_canQuit);
         }
     } else if (propertyName == QStringLiteral("CanRaise")) {
         bool canRaise = value.toBool();
         if (m_canRaise != canRaise) {
             m_canRaise = canRaise;
-            emit canRaiseChanged(m_canRaise);
+            Q_EMIT canRaiseChanged(m_canRaise);
         }
     } else if (propertyName == QStringLiteral("CanSetFullscreen")) {
         bool canSetFullscreen = value.toBool();
         if (m_canSetFullscreen != canSetFullscreen) {
             m_canSetFullscreen = canSetFullscreen;
-            emit canSetFullscreenChanged(m_canSetFullscreen);
+            Q_EMIT canSetFullscreenChanged(m_canSetFullscreen);
         }
     } else if (propertyName == QStringLiteral("DesktopEntry")) {
         QString desktopEntry = value.toString();
         if (m_desktopEntry != desktopEntry) {
             m_desktopEntry = desktopEntry;
-            emit desktopEntryChanged(m_desktopEntry);
+            Q_EMIT desktopEntryChanged(m_desktopEntry);
         }
     } else if (propertyName == QStringLiteral("Fullscreen")) {
         bool fullscreen = value.toBool();
         if (m_fullscreen != fullscreen) {
             m_fullscreen = fullscreen;
-            emit fullscreenChanged(m_fullscreen);
+            Q_EMIT fullscreenChanged(m_fullscreen);
         }
     } else if (propertyName == QStringLiteral("HasTrackList")) {
         bool hasTrackList = value.toBool();
         if (m_hasTrackList != hasTrackList) {
             m_hasTrackList = hasTrackList;
-            emit hasTrackListChanged(m_hasTrackList);
+            Q_EMIT hasTrackListChanged(m_hasTrackList);
         }
     } else if (propertyName == QStringLiteral("Identity")) {
         QString identity= value.toString();
         if (m_identity != identity) {
             m_identity = identity;
-            emit identityChanged(m_identity);
+            Q_EMIT identityChanged(m_identity);
         }
     } else if (propertyName == QStringLiteral("SupportedMimeTypes")) {
         QStringList supportedUriSchemes = value.toStringList();
         if (m_supportedUriSchemes != supportedUriSchemes) {
             m_supportedUriSchemes = supportedUriSchemes;
-            emit supportedMimeTypesChanged(m_supportedUriSchemes);
+            Q_EMIT supportedMimeTypesChanged(m_supportedUriSchemes);
         }
     } else if (propertyName == QStringLiteral("SupportedUriSchemes")) {
         QStringList supportedMimeTypes = value.toStringList();
         if (m_supportedMimeTypes != supportedMimeTypes) {
             m_supportedMimeTypes = supportedMimeTypes;
-            emit supportedUriSchemesChanged(m_supportedMimeTypes);
+            Q_EMIT supportedUriSchemesChanged(m_supportedMimeTypes);
         }
     } else {
         qWarning() << Q_FUNC_INFO

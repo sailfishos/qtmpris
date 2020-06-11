@@ -656,11 +656,11 @@ void MprisController::onCanControlChanged()
         // I could disconnect and re-connect the signals so I avoid
         // double arriving signals but this really shouldn't happen
         // ever.
-        emit canGoNextChanged();
-        emit canGoPreviousChanged();
-        emit canPauseChanged();
-        emit canPlayChanged();
-        emit canSeekChanged();
+        Q_EMIT canGoNextChanged();
+        Q_EMIT canGoPreviousChanged();
+        Q_EMIT canPauseChanged();
+        Q_EMIT canPlayChanged();
+        Q_EMIT canSeekChanged();
         qWarning() << Q_FUNC_INFO
                    << "CanControl is not supposed to change its value!";
         return;
@@ -672,7 +672,7 @@ void MprisController::onCanControlChanged()
 void MprisController::onPositionChanged(qlonglong aPosition)
 {
     m_requestedPosition = false;
-    emit positionChanged(aPosition);
+    Q_EMIT positionChanged(aPosition);
 }
 
 
