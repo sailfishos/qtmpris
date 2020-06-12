@@ -100,7 +100,7 @@ public:
     Q_INVOKABLE bool setPosition(const QString &trackId, qlonglong position) const;
     Q_INVOKABLE bool stop() const;
 
-public slots:
+public Q_SLOTS:
 
     bool singleService() const;
     void setSingleService(bool single);
@@ -166,7 +166,7 @@ public slots:
     double volume() const;
     void setVolume(double volume);
 
-signals:
+Q_SIGNALS:
     void singleServiceChanged();
     void currentServiceChanged();
     void availableServicesChanged();

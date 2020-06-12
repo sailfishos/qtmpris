@@ -95,7 +95,7 @@ void MprisPlayer::setServiceName(const QString &serviceName)
     m_serviceName = serviceName;
     registerService();
 
-    emit serviceNameChanged();
+    Q_EMIT serviceNameChanged();
 }
 
 
@@ -112,7 +112,7 @@ void MprisPlayer::setCanQuit(bool canQuit)
     }
 
     m_canQuit = canQuit;
-    emit canQuitChanged();
+    Q_EMIT canQuitChanged();
 }
 
 bool MprisPlayer::canRaise() const
@@ -127,7 +127,7 @@ void MprisPlayer::setCanRaise(bool canRaise)
     }
 
     m_canRaise = canRaise;
-    emit canRaiseChanged();
+    Q_EMIT canRaiseChanged();
 }
 
 bool MprisPlayer::canSetFullscreen() const
@@ -142,7 +142,7 @@ void MprisPlayer::setCanSetFullscreen(bool canSetFullscreen)
     }
 
     m_canSetFullscreen = canSetFullscreen;
-    emit canSetFullscreenChanged();
+    Q_EMIT canSetFullscreenChanged();
 }
 
 QString MprisPlayer::desktopEntry() const
@@ -157,7 +157,7 @@ void MprisPlayer::setDesktopEntry(const QString &desktopEntry)
     }
 
     m_desktopEntry = desktopEntry;
-    emit desktopEntryChanged();
+    Q_EMIT desktopEntryChanged();
 }
 
 bool MprisPlayer::fullscreen() const
@@ -172,7 +172,7 @@ void MprisPlayer::setFullscreen(bool fullscreen)
     }
 
     m_fullscreen = fullscreen;
-    emit fullscreenChanged();
+    Q_EMIT fullscreenChanged();
 }
 
 bool MprisPlayer::hasTrackList() const
@@ -187,7 +187,7 @@ void MprisPlayer::setHasTrackList(bool hasTrackList)
     }
 
     m_hasTrackList = hasTrackList;
-    emit hasTrackListChanged();
+    Q_EMIT hasTrackListChanged();
 }
 
 QString MprisPlayer::identity() const
@@ -202,7 +202,7 @@ void MprisPlayer::setIdentity(const QString &identity)
     }
 
     m_identity = identity;
-    emit identityChanged();
+    Q_EMIT identityChanged();
 }
 
 QStringList MprisPlayer::supportedUriSchemes() const
@@ -217,7 +217,7 @@ void MprisPlayer::setSupportedUriSchemes(const QStringList &supportedUriSchemes)
     }
 
     m_supportedUriSchemes = supportedUriSchemes;
-    emit supportedUriSchemesChanged();
+    Q_EMIT supportedUriSchemesChanged();
 }
 
 QStringList MprisPlayer::supportedMimeTypes() const
@@ -232,7 +232,7 @@ void MprisPlayer::setSupportedMimeTypes(const QStringList &supportedMimeTypes)
     }
 
     m_supportedMimeTypes = supportedMimeTypes;
-    emit supportedMimeTypesChanged();
+    Q_EMIT supportedMimeTypesChanged();
 }
 
 // Mpris2 Player Interface
@@ -248,7 +248,7 @@ void MprisPlayer::setCanControl(bool canControl)
     }
 
     m_canControl = canControl;
-    emit canControlChanged();
+    Q_EMIT canControlChanged();
 }
 
 bool MprisPlayer::canGoNext() const
@@ -263,7 +263,7 @@ void MprisPlayer::setCanGoNext(bool canGoNext)
     }
 
     m_canGoNext = canGoNext;
-    emit canGoNextChanged();
+    Q_EMIT canGoNextChanged();
 }
 
 bool MprisPlayer::canGoPrevious() const
@@ -278,7 +278,7 @@ void MprisPlayer::setCanGoPrevious(bool canGoPrevious)
     }
 
     m_canGoPrevious = canGoPrevious;
-    emit canGoPreviousChanged();
+    Q_EMIT canGoPreviousChanged();
 }
 
 bool MprisPlayer::canPause() const
@@ -293,7 +293,7 @@ void MprisPlayer::setCanPause(bool canPause)
     }
 
     m_canPause = canPause;
-    emit canPauseChanged();
+    Q_EMIT canPauseChanged();
 }
 
 bool MprisPlayer::canPlay() const
@@ -308,7 +308,7 @@ void MprisPlayer::setCanPlay(bool canPlay)
     }
 
     m_canPlay = canPlay;
-    emit canPlayChanged();
+    Q_EMIT canPlayChanged();
 }
 
 bool MprisPlayer::canSeek() const
@@ -323,7 +323,7 @@ void MprisPlayer::setCanSeek(bool canSeek)
     }
 
     m_canSeek = canSeek;
-    emit canSeekChanged();
+    Q_EMIT canSeekChanged();
 }
 
 Mpris::LoopStatus MprisPlayer::loopStatus() const
@@ -338,7 +338,7 @@ void MprisPlayer::setLoopStatus(Mpris::LoopStatus loopStatus)
     }
 
     m_loopStatus = loopStatus;
-    emit loopStatusChanged();
+    Q_EMIT loopStatusChanged();
 }
 
 double MprisPlayer::maximumRate() const
@@ -353,7 +353,7 @@ void MprisPlayer::setMaximumRate(double maximumRate)
     }
 
     m_maximumRate = maximumRate;
-    emit maximumRateChanged();
+    Q_EMIT maximumRateChanged();
 }
 
 QVariantMap MprisPlayer::metadata() const
@@ -369,7 +369,7 @@ void MprisPlayer::setMetadata(const QVariantMap &metadata)
 
     m_metadata = metadata;
     m_typedMetadata = typeMetadata(metadata);
-    emit metadataChanged();
+    Q_EMIT metadataChanged();
 }
 
 double MprisPlayer::minimumRate() const
@@ -384,7 +384,7 @@ void MprisPlayer::setMinimumRate(double minimumRate)
     }
 
     m_minimumRate = minimumRate;
-    emit minimumRateChanged();
+    Q_EMIT minimumRateChanged();
 }
 
 Mpris::PlaybackStatus MprisPlayer::playbackStatus() const
@@ -399,7 +399,7 @@ void MprisPlayer::setPlaybackStatus(Mpris::PlaybackStatus playbackStatus)
     }
 
     m_playbackStatus = playbackStatus;
-    emit playbackStatusChanged();
+    Q_EMIT playbackStatusChanged();
 }
 
 qlonglong MprisPlayer::position() const
@@ -414,7 +414,7 @@ void MprisPlayer::setPosition(qlonglong position)
     }
 
     m_position = position;
-    emit positionChanged();
+    Q_EMIT positionChanged();
 }
 
 double MprisPlayer::rate() const
@@ -429,7 +429,7 @@ void MprisPlayer::setRate(double rate)
     }
 
     m_rate = rate;
-    emit rateChanged();
+    Q_EMIT rateChanged();
 }
 
 bool MprisPlayer::shuffle() const
@@ -444,7 +444,7 @@ void MprisPlayer::setShuffle(bool shuffle)
     }
 
     m_shuffle= shuffle;
-    emit shuffleChanged();
+    Q_EMIT shuffleChanged();
 }
 
 double MprisPlayer::volume() const
@@ -459,7 +459,7 @@ void MprisPlayer::setVolume(double volume)
     }
 
     m_volume = volume;
-    emit volumeChanged();
+    Q_EMIT volumeChanged();
 }
 
 

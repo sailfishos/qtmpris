@@ -118,7 +118,7 @@ void MprisPlayerAdaptor::setLoopStatus(const QString &value)
 {
     MprisPlayer * const player = static_cast<MprisPlayer *>(parent());
     if (player->canControl()) {
-        emit player->loopStatusRequested(Mpris::enumerationFromString<Mpris::LoopStatus>(value));
+        Q_EMIT player->loopStatusRequested(Mpris::enumerationFromString<Mpris::LoopStatus>(value));
         return;
     }
 
@@ -172,9 +172,9 @@ void MprisPlayerAdaptor::setRate(double value)
 
     if (errorMessage.isEmpty()) {
         if (value == 0) {
-            emit player->pauseRequested();
+            Q_EMIT player->pauseRequested();
         } else {
-            emit player->rateRequested(value);
+            Q_EMIT player->rateRequested(value);
         }
         return;
     }
@@ -193,7 +193,7 @@ void MprisPlayerAdaptor::setShuffle(bool value)
 {
     MprisPlayer * const player = static_cast<MprisPlayer *>(parent());
     if (player->canControl()) {
-        emit player->shuffleRequested(value);
+        Q_EMIT player->shuffleRequested(value);
         return;
     }
 
@@ -211,7 +211,7 @@ void MprisPlayerAdaptor::setVolume(double value)
 {
     MprisPlayer * const player = static_cast<MprisPlayer *>(parent());
     if (player->canControl()) {
-        emit player->volumeRequested(value < 0 ? 0 : value);
+        Q_EMIT player->volumeRequested(value < 0 ? 0 : value);
         return;
     }
 
@@ -232,7 +232,7 @@ void MprisPlayerAdaptor::Next()
         return;
     }
 
-    emit player->nextRequested();
+    Q_EMIT player->nextRequested();
 }
 
 void MprisPlayerAdaptor::OpenUri(const QString &Uri)
@@ -263,7 +263,7 @@ void MprisPlayerAdaptor::OpenUri(const QString &Uri)
     mimeNames.prepend(mime.name());
     for (int i = 0; i < mimeNames.size(); i++) {
         if (player->supportedMimeTypes().contains(mimeNames[i])) {
-            emit player->openUriRequested(url);
+            Q_EMIT player->openUriRequested(url);
             return;
         }
     }
@@ -286,7 +286,7 @@ void MprisPlayerAdaptor::Pause()
     switch (player->playbackStatus()) {
     case Mpris::Playing:
     case Mpris::Stopped:
-        emit player->pauseRequested();
+        Q_EMIT player->pauseRequested();
         break;
     case Mpris::Paused:
     default:
@@ -310,7 +310,7 @@ void MprisPlayerAdaptor::Play()
     switch (player->playbackStatus()) {
     case Mpris::Stopped:
     case Mpris::Paused:
-        emit player->playRequested();
+        Q_EMIT player->playRequested();
         break;
     case Mpris::Playing:
     default:
@@ -334,7 +334,7 @@ void MprisPlayerAdaptor::PlayPause()
             return;
         }
 
-        emit player->pauseRequested();
+        Q_EMIT player->pauseRequested();
         break;
     case Mpris::Stopped:
     case Mpris::Paused:
@@ -343,7 +343,7 @@ void MprisPlayerAdaptor::PlayPause()
             return;
         }
 
-        emit player->playRequested();
+        Q_EMIT player->playRequested();
         break;
     default:
         // Nothing to do
@@ -363,7 +363,7 @@ void MprisPlayerAdaptor::Previous()
         return;
     }
 
-    emit player->previousRequested();
+    Q_EMIT player->previousRequested();
 }
 
 void MprisPlayerAdaptor::Seek(qlonglong Offset)
@@ -379,18 +379,18 @@ void MprisPlayerAdaptor::Seek(qlonglong Offset)
     }
 
     if (Offset < 0) {
-        emit player->seekRequested(Offset);
+        Q_EMIT player->seekRequested(Offset);
         return;
     }
 
     QVariantMap metadata = player->metadata();
     QVariant length = metadata[Mpris::metadataToString(Mpris::Length)];
     if (length.isValid() && (player->position() + Offset) > length.toLongLong()) {
-        emit player->nextRequested();
+        Q_EMIT player->nextRequested();
         return;
     }
 
-    emit player->seekRequested(Offset);
+    Q_EMIT player->seekRequested(Offset);
 }
 
 void MprisPlayerAdaptor::SetPosition(const QDBusObjectPath &TrackId, qlonglong Position)
@@ -422,7 +422,7 @@ void MprisPlayerAdaptor::SetPosition(const QDBusObjectPath &TrackId, qlonglong P
         return;
     }
 
-    emit player->setPositionRequested(TrackId, Position);
+    Q_EMIT player->setPositionRequested(TrackId, Position);
 }
 
 void MprisPlayerAdaptor::Stop()
@@ -436,7 +436,7 @@ void MprisPlayerAdaptor::Stop()
     switch (player->playbackStatus()) {
     case Mpris::Playing:
     case Mpris::Paused:
-        emit player->stopRequested();
+        Q_EMIT player->stopRequested();
         break;
     case Mpris::Stopped:
     default:

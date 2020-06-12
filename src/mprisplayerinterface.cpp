@@ -64,91 +64,91 @@ void MprisPlayerInterface::onPropertyChanged(const QString &propertyName, const 
         bool canControl = value.toBool();
         if (m_canControl != canControl) {
             m_canControl = canControl;
-            emit canControlChanged(m_canControl);
+            Q_EMIT canControlChanged(m_canControl);
         }
     } else if (propertyName == QStringLiteral("CanGoNext")) {
         bool canGoNext = value.toBool();
         if (m_canGoNext != canGoNext) {
             m_canGoNext = canGoNext;
-            emit canGoNextChanged(m_canGoNext);
+            Q_EMIT canGoNextChanged(m_canGoNext);
         }
     } else if (propertyName == QStringLiteral("CanGoPrevious")) {
         bool canGoPrevious = value.toBool();
         if (m_canGoPrevious != canGoPrevious) {
             m_canGoPrevious = canGoPrevious;
-            emit canGoPreviousChanged(m_canGoPrevious);
+            Q_EMIT canGoPreviousChanged(m_canGoPrevious);
         }
     } else if (propertyName == QStringLiteral("CanPause")) {
         bool canPause = value.toBool();
         if (m_canPause != canPause) {
             m_canPause = canPause;
-            emit canPauseChanged(m_canPause);
+            Q_EMIT canPauseChanged(m_canPause);
         }
     } else if (propertyName == QStringLiteral("CanPlay")) {
         bool canPlay = value.toBool();
         if (m_canPlay != canPlay) {
             m_canPlay = canPlay;
-            emit canPlayChanged(m_canPlay);
+            Q_EMIT canPlayChanged(m_canPlay);
         }
     } else if (propertyName == QStringLiteral("CanSeek")) {
         bool canSeek = value.toBool();
         if (m_canSeek != canSeek) {
             m_canSeek = canSeek;
-            emit canSeekChanged(m_canSeek);
+            Q_EMIT canSeekChanged(m_canSeek);
         }
     } else if (propertyName == QStringLiteral("LoopStatus")) {
         QString loopStatus = value.toString();
         if (m_loopStatus != loopStatus) {
             m_loopStatus = loopStatus;
-            emit loopStatusChanged(m_loopStatus);
+            Q_EMIT loopStatusChanged(m_loopStatus);
         }
     } else if (propertyName == QStringLiteral("MaximumRate")) {
         bool maximumRate = value.toDouble();
         if (m_maximumRate != maximumRate) {
             m_maximumRate = maximumRate;
-            emit maximumRateChanged(m_maximumRate);
+            Q_EMIT maximumRateChanged(m_maximumRate);
         }
     } else if (propertyName == QStringLiteral("Metadata")) {
         QVariantMap metadata = value.toMap();
         if (m_metadata != metadata) {
             m_metadata = metadata;
-            emit metadataChanged(m_metadata);
+            Q_EMIT metadataChanged(m_metadata);
         }
     } else if (propertyName == QStringLiteral("MinimumRate")) {
         double minimumRate = value.toDouble();
         if (m_minimumRate != minimumRate) {
             m_minimumRate = minimumRate;
-            emit minimumRateChanged(m_minimumRate);
+            Q_EMIT minimumRateChanged(m_minimumRate);
         }
     } else if (propertyName == QStringLiteral("PlaybackStatus")) {
         QString playbackStatus = value.toString();
         if (m_playbackStatus != playbackStatus) {
             m_playbackStatus = playbackStatus;
-            emit playbackStatusChanged(m_playbackStatus);
+            Q_EMIT playbackStatusChanged(m_playbackStatus);
         }
     } else if (propertyName == QStringLiteral("Position")) {
         qlonglong position = value.toLongLong();
         if (m_position != position) {
             m_position = position;
-            emit positionChanged(m_position);
+            Q_EMIT positionChanged(m_position);
         }
     } else if (propertyName == QStringLiteral("Rate")) {
         double rate = value.toDouble();
         if (m_rate != rate) {
             m_rate = rate;
-            emit rateChanged(m_rate);
+            Q_EMIT rateChanged(m_rate);
         }
     } else if (propertyName == QStringLiteral("Shuffle")) {
         bool shuffle = value.toBool();
         if (m_shuffle != shuffle) {
             m_shuffle = shuffle;
-            emit shuffleChanged(m_shuffle);
+            Q_EMIT shuffleChanged(m_shuffle);
         }
     } else if (propertyName == QStringLiteral("Volume")) {
         double volume = value.toDouble();
         if (m_volume != volume) {
             m_volume = volume;
-            emit volumeChanged(m_volume);
+            Q_EMIT volumeChanged(m_volume);
         }
     } else {
         qWarning() << Q_FUNC_INFO
