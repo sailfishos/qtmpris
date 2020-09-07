@@ -5,12 +5,15 @@ CONFIG += qt link_pkgconfig no_keywords
 
 QT = core dbus qml
 
-PKGCONFIG = dbusextended-qt5
 TARGET = $${MPRISQTLIB}
 
 QMAKE_SUBSTITUTES = $${TARGET}.prf.in
 
 DEFINES += MPRIS_QT_LIBRARY
+
+DEPENDPATH += ../qtdbusextended
+INCLUDEPATH += ../qtdbusextended
+LIBS += -L../qtdbusextended -ldbusextended-qt5
 
 # Generate pkg-config support by default
 # Note that we HAVE TO also create prl config as QMake implementation
@@ -58,7 +61,7 @@ prf.files = $${TARGET}.prf
 prf.path = $$[QMAKE_MKSPECS]/features
 INSTALLS += target headers prf
 
-QMAKE_PKGCONFIG_REQUIRES = Qt5Core Qt5DBus dbusextended-qt5
+QMAKE_PKGCONFIG_REQUIRES = Qt5Core Qt5DBus
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_INCDIR = $$headers.path
 QMAKE_PKGCONFIG_DESTDIR = pkgconfig
