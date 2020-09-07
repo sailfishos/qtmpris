@@ -9,7 +9,6 @@ QT += qml quick
 DEPENDPATH += ../../src
 INCLUDEPATH += ../../src
 LIBS += -L../../src -l$${MPRISQTLIB}
-PKGCONFIG = dbusextended-qt5
 
 SOURCES += \
     controller.cpp

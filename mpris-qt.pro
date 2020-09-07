@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 declarative.depends = src
-SUBDIRS = src declarative
+src.depends = qtdbusextended
+SUBDIRS = src declarative qtdbusextended
