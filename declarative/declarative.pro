@@ -8,7 +8,6 @@ INCLUDEPATH += ../src
 QT = core dbus qml
 
 LIBS += -L../src -l$${MPRISQTLIB}
-PKGCONFIG = dbusextended-qt5
 
 EXAMPLE = ../example/declarative/*
 
