@@ -11,6 +11,10 @@ QMAKE_SUBSTITUTES = $${TARGET}.prf.in
 
 DEFINES += MPRIS_QT_LIBRARY
 
+use_system_dbus {
+    DEFINES += USE_SYSTEM_DBUS
+}
+
 DEPENDPATH += ../qtdbusextended
 INCLUDEPATH += ../qtdbusextended
 LIBS += -L../qtdbusextended -ldbusextended-qt5

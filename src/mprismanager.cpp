@@ -40,13 +40,22 @@ static const QString dBusObjectPath = QStringLiteral("/org/freedesktop/DBus");
 static const QString dBusInterface = QStringLiteral("org.freedesktop.DBus");
 static const QString dBusNameOwnerChangedSignal = QStringLiteral("NameOwnerChanged");
 
+static inline QDBusConnection getDBusConnection()
+{
+#ifdef USE_SYSTEM_DBUS
+    return QDBusConnection::systemBus();
+#else
+    return QDBusConnection::sessionBus();
+#endif
+}
+
 
 MprisManager::MprisManager(QObject *parent)
     : QObject(parent)
     , m_singleService(false)
     , m_playbackStatusMapper(new QSignalMapper(this))
 {
-    QDBusConnection connection = QDBusConnection::sessionBus();
+    QDBusConnection connection = getDBusConnection();
 
     if (!connection.isConnected()) {
         qmlInfo(this) << "Failed attempting to connect to DBus";
@@ -174,7 +183,7 @@ void MprisManager::setCurrentService(const QString &service)
 
     QSharedPointer<MprisController> controller = availableController(service);
     if (controller.isNull()) {
-        controller = QSharedPointer<MprisController>(new MprisController(service, QDBusConnection::sessionBus(), this));
+        controller = QSharedPointer<MprisController>(new MprisController(service, getDBusConnection(), this));
     } else {
         m_availableControllers.move(m_availableControllers.indexOf(controller), 0);
     }
@@ -402,7 +411,7 @@ void MprisManager::onServiceAppeared(const QString &service)
         if (!m_currentController.isNull() && service == m_currentController->service()) {
             controller = m_currentController;
         } else {
-            controller = QSharedPointer<MprisController>(new MprisController(service, QDBusConnection::sessionBus(), this));
+            controller = QSharedPointer<MprisController>(new MprisController(service, getDBusConnection(), this));
         }
 
         connect(controller.data(), SIGNAL(playbackStatusChanged()), m_playbackStatusMapper, SLOT(map()));
