@@ -40,6 +40,15 @@ static const QString mprisObjectPath = QStringLiteral("/org/mpris/MediaPlayer2")
 static const QString dBusPropertiesInterface = QStringLiteral("org.freedesktop.DBus.Properties");
 static const QString dBusPropertiesChangedSignal = QStringLiteral("PropertiesChanged");
 
+static inline QDBusConnection getDBusConnection()
+{
+#ifdef USE_SYSTEM_DBUS
+    return QDBusConnection::systemBus();
+#else
+    return QDBusConnection::sessionBus();
+#endif
+}
+
 
 MprisPlayer::MprisPlayer(QObject *parent)
     : QObject(parent)
@@ -66,7 +75,7 @@ MprisPlayer::MprisPlayer(QObject *parent)
     , m_shuffle(false)
     , m_volume(0)
 {
-    QDBusConnection connection = QDBusConnection::sessionBus();
+    QDBusConnection connection = getDBusConnection();
 
     if (!connection.isConnected()) {
         qmlInfo(this) << "Failed attempting to connect to DBus";
@@ -532,7 +541,7 @@ void MprisPlayer::registerService()
         return;
     }
 
-    QDBusConnection connection = QDBusConnection::sessionBus();
+    QDBusConnection connection = getDBusConnection();
 
     if (!connection.isConnected()) {
         qmlInfo(this) << "Failed attempting to connect to DBus";
@@ -549,7 +558,7 @@ void MprisPlayer::registerService()
 void MprisPlayer::unregisterService()
 {
     if (!m_serviceName.isEmpty()) {
-        QDBusConnection connection = QDBusConnection::sessionBus();
+        QDBusConnection connection = getDBusConnection();
         connection.unregisterService(QString(serviceNamePrefix).append(m_serviceName));
     }
 }
@@ -560,7 +569,7 @@ void MprisPlayer::notifyPropertiesChanged(const QString& interfaceName, const QV
         return;
     }
 
-    QDBusConnection connection = QDBusConnection::sessionBus();
+    QDBusConnection connection = getDBusConnection();
 
     if (!connection.isConnected()) {
         qmlInfo(this) << "Failed attempting to connect to DBus";
