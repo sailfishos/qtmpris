@@ -30,7 +30,12 @@
 
 static const char *playbackStatusStrings[] = { "Playing", "Paused", "Stopped" };
 static const char *loopStatusStrings[] = { "None", "Track", "Playlist" };
-static const char *metadataStrings[] = { "mpris:trackid", "mpris:length", "mpris:artUrl", "xesam:album", "xesam:albumArtist", "xesam:artist", "xesam:asText", "xesam:audioBPM", "xesam:autoRating", "xesam:comment", "xesam:composer", "xesam:contentCreated", "xesam:discNumber", "xesam:firstUsed", "xesam:genre", "xesam:lastUsed", "xesam:lyricist", "xesam:title", "xesam:trackNumber", "xesam:url", "xesam:useCount", "xesam:userRating" };
+static const char *metadataStrings[] = { "mpris:trackid", "mpris:length", "mpris:artUrl", "xesam:album",
+                                         "xesam:albumArtist", "xesam:artist", "xesam:asText", "xesam:audioBPM",
+                                         "xesam:autoRating", "xesam:comment", "xesam:composer", "xesam:contentCreated",
+                                         "xesam:discNumber", "xesam:firstUsed", "xesam:genre", "xesam:lastUsed",
+                                         "xesam:lyricist", "xesam:title", "xesam:trackNumber", "xesam:url",
+                                         "xesam:useCount", "xesam:userRating" };
 
 
 Mpris::Mpris(QObject *parent)
