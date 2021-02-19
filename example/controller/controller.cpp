@@ -29,13 +29,17 @@
 
 #include <QGuiApplication>
 
+static QObject * api_factory(QQmlEngine *, QJSEngine *)
+{
+    return new Mpris;
+}
 
 int main(int argc, char *argv[])
 {
     QGuiApplication *app = new QGuiApplication(argc, argv);
     QQuickView *view = new QQuickView;
 
-    qmlRegisterSingletonType<Mpris>("org.nemomobile.qtmpris", 1, 0, "Mpris", Mpris::api_factory);
+    qmlRegisterSingletonType<Mpris>("org.nemomobile.qtmpris", 1, 0, "Mpris", api_factory);
     qmlRegisterType<MprisManager>("org.nemomobile.qtmpris", 1, 0, "MprisManager");
 
     view->setSource(app->applicationDirPath().append("/../qml/controller.qml"));

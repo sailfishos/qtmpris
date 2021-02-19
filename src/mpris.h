@@ -31,9 +31,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
-class QQmlEngine;
-class QJSEngine;
-
 class MPRIS_QT_EXPORT Mpris : public QObject
 {
     Q_OBJECT
@@ -84,8 +81,6 @@ public:
 
     Mpris(QObject *parent = 0);
     ~Mpris();
-
-    static QObject *api_factory(QQmlEngine *, QJSEngine *);
 
     Q_INVOKABLE static QString metadataToString(Metadata metadata);
 

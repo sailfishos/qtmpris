@@ -31,17 +31,23 @@
 
 #include <qqml.h>
 
+static QObject * api_factory(QQmlEngine *, QJSEngine *)
+{
+    return new Mpris;
+}
+
 MprisPlugin::MprisPlugin(QObject *parent) :
-    QQmlExtensionPlugin(parent) {
-
+    QQmlExtensionPlugin(parent)
+{
 }
 
-MprisPlugin::~MprisPlugin() {
-
+MprisPlugin::~MprisPlugin()
+{
 }
 
-void MprisPlugin::registerTypes(const char *uri) {
-    qmlRegisterSingletonType<Mpris>(uri, 1, 0, "Mpris", Mpris::api_factory);
+void MprisPlugin::registerTypes(const char *uri)
+{
+    qmlRegisterSingletonType<Mpris>(uri, 1, 0, "Mpris", api_factory);
     qmlRegisterType<MprisPlayer>(uri, 1, 0, "MprisPlayer");
     qmlRegisterType<MprisManager>(uri, 1, 0, "MprisManager");
 }
