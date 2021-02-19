@@ -26,7 +26,7 @@
 #ifndef MPRISCONTROLLER_H
 #define MPRISCONTROLLER_H
 
-#include <MprisQt>
+#include <mprisqt.h>
 #include <Mpris>
 
 #include <QDBusConnection>

@@ -1,7 +1,7 @@
 Name:       mpris-qt5
 
 Summary:    Qt and QML MPRIS interface and adaptor
-Version:    0.0.5
+Version:    1.0.6
 Release:    1
 License:    LGPLv2
 URL:        https://git.sailfishos.org/mer-core/qtmpris
@@ -55,7 +55,6 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-,root,root,-)
 %{_datarootdir}/qt5/mkspecs/features/%{name}.prf
-%{_includedir}/qt5/MprisQt/MprisQt
 %{_includedir}/qt5/MprisQt/Mpris
 %{_includedir}/qt5/MprisQt/MprisPlayer
 %{_includedir}/qt5/MprisQt/MprisController

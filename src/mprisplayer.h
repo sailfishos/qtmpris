@@ -26,7 +26,7 @@
 #ifndef MPRISPLAYER_H
 #define MPRISPLAYER_H
 
-#include <MprisQt>
+#include <mprisqt.h>
 #include <Mpris>
 
 #include <QDBusContext>

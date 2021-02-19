@@ -3,7 +3,7 @@ include(../common.pri)
 TEMPLATE = lib
 CONFIG += qt link_pkgconfig no_keywords
 
-QT = core dbus qml
+QT = core dbus
 
 TARGET = $${MPRISQTLIB}
 
@@ -44,7 +44,6 @@ HEADERS += \
     mprismanager.h
 
 INSTALL_HEADERS = \
-    MprisQt \
     Mpris \
     MprisPlayer \
     MprisController \

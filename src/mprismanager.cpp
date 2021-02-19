@@ -27,12 +27,11 @@
 
 #include "mpriscontroller.h"
 
-#include <qqmlinfo.h>
-
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 
 #include <QtCore/QSignalMapper>
+#include <QDebug>
 
 static const QString mprisNameSpace = QStringLiteral("org.mpris.MediaPlayer2.*");
 static const QString dBusService = QStringLiteral("org.freedesktop.DBus");
@@ -58,7 +57,7 @@ MprisManager::MprisManager(QObject *parent)
     QDBusConnection connection = getDBusConnection();
 
     if (!connection.isConnected()) {
-        qmlInfo(this) << "Failed attempting to connect to DBus";
+        qWarning() << "Mpris: Failed attempting to connect to DBus";
         return;
     }
 
@@ -177,7 +176,7 @@ void MprisManager::setCurrentService(const QString &service)
     QRegExp rx(mprisNameSpace);
     rx.setPatternSyntax(QRegExp::Wildcard);
     if (!rx.exactMatch(service)) {
-        qmlInfo(this) << service << "is not a proper Mpris2 service";
+        qWarning() << "Mpris:" << service << "is not a proper Mpris2 service";
         return;
     }
 

@@ -26,13 +26,10 @@
 #ifndef MPRIS_H
 #define MPRIS_H
 
-#include <MprisQt>
+#include <mprisqt.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-
-class QQmlEngine;
-class QJSEngine;
 
 class MPRIS_QT_EXPORT Mpris : public QObject
 {
@@ -84,8 +81,6 @@ public:
 
     Mpris(QObject *parent = 0);
     ~Mpris();
-
-    static QObject *api_factory(QQmlEngine *, QJSEngine *);
 
     Q_INVOKABLE static QString metadataToString(Metadata metadata);
 
