@@ -7,9 +7,6 @@ Qt and QML MPRIS interface and adaptor
 Installation:
 -------------
 
-MPRIS for Qt depends on [Extended DBus for Qt](https://github.com/nemomobile/qtdbusextended) so make sure to install it before building this project.
-
-
 ```
 $ qmake && make && make install
 ```
