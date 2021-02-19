@@ -55,7 +55,6 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-,root,root,-)
 %{_datarootdir}/qt5/mkspecs/features/%{name}.prf
-%{_includedir}/qt5/MprisQt/MprisQt
 %{_includedir}/qt5/MprisQt/Mpris
 %{_includedir}/qt5/MprisQt/MprisPlayer
 %{_includedir}/qt5/MprisQt/MprisController

@@ -44,7 +44,6 @@ HEADERS += \
     mprismanager.h
 
 INSTALL_HEADERS = \
-    MprisQt \
     Mpris \
     MprisPlayer \
     MprisController \

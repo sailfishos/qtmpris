@@ -26,7 +26,7 @@
 #ifndef MPRIS_H
 #define MPRIS_H
 
-#include <MprisQt>
+#include <mprisqt.h>
 
 #include <QtCore/QObject>
 #include <QtCore/QString>

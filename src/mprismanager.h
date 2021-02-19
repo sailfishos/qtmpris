@@ -26,7 +26,7 @@
 #ifndef MPRISMANAGER_H
 #define MPRISMANAGER_H
 
-#include <MprisQt>
+#include <mprisqt.h>
 #include <Mpris>
 #include <MprisController>
 
