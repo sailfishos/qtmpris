@@ -3,7 +3,7 @@ include(../common.pri)
 TEMPLATE = lib
 CONFIG += qt link_pkgconfig no_keywords
 
-QT = core dbus qml
+QT = core dbus
 
 TARGET = $${MPRISQTLIB}
 
