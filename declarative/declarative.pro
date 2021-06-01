@@ -14,19 +14,24 @@ EXAMPLE = ../example/declarative/*
 OTHER_FILES += $${EXAMPLE}
 
 TARGET = $${MPRISQTLIB}-qml-plugin
-PLUGIN_IMPORT_PATH = org/nemomobile/mpris
+PLUGIN_IMPORT_PATH = Sailfish/Mpris
 
 QMAKE_SUBSTITUTES = qmldir.in
 
 SOURCES += \
+    declarativemprisplayer.cpp \
     mprisplugin.cpp
 
 HEADERS += \
+    declarativemprisplayer_p.h \
     mprisplugin.h
 
 target.path = $$[QT_INSTALL_QML]/$$PLUGIN_IMPORT_PATH
 
-qml.files = qmldir plugins.qmltypes
+qml.files = \
+    qmldir \
+    plugins.qmltypes \
+    MprisAudio.qml
 qml.path = $$target.path
 INSTALLS += target qml
 

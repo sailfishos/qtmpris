@@ -28,13 +28,10 @@
 #include <Mpris>
 #include <MprisPlayer>
 #include <MprisManager>
+#include <MprisController>
+#include <MprisMetaData>
 
 #include <qqml.h>
-
-static QObject * api_factory(QQmlEngine *, QJSEngine *)
-{
-    return new Mpris;
-}
 
 MprisPlugin::MprisPlugin(QObject *parent) :
     QQmlExtensionPlugin(parent)
@@ -47,7 +44,9 @@ MprisPlugin::~MprisPlugin()
 
 void MprisPlugin::registerTypes(const char *uri)
 {
-    qmlRegisterSingletonType<Mpris>(uri, 1, 0, "Mpris", api_factory);
+    qmlRegisterUncreatableType<Mpris>(uri, 1, 0, "Mpris", QStringLiteral("Mpris is a namespace object"));
     qmlRegisterType<MprisPlayer>(uri, 1, 0, "MprisPlayer");
     qmlRegisterType<MprisManager>(uri, 1, 0, "MprisManager");
+    qmlRegisterUncreatableType<MprisMetaData>(uri, 1, 0, "MprisMetaData", QStringLiteral("MprisMetaData can't be created"));
+    qmlRegisterUncreatableType<MprisController>(uri, 1, 0, "MprisController", QStringLiteral("MprisMetaData can't be created"));
 }

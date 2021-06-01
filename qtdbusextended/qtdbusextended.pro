@@ -9,9 +9,7 @@ DEFINES += QT_DBUS_EXTENDED_LIBRARY
 
 SOURCES += \
     dbusextendedabstractinterface.cpp \
-    dbusextendedpendingcallwatcher.cpp
 
 HEADERS += \
     dbusextended.h \
     dbusextendedabstractinterface.h \
-    dbusextendedpendingcallwatcher_p.h

@@ -28,27 +28,29 @@
 
 #include <mprisqt.h>
 #include <Mpris>
+#include <MprisMetaData>
 
 #include <QDBusConnection>
 #include <QDBusObjectPath>
 
-#include <QtCore/QObject>
-#include <QtCore/QByteArray>
-#include <QtCore/QList>
-#include <QtCore/QMap>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtCore/QVariant>
+#include <QObject>
+#include <QByteArray>
+#include <QList>
+#include <QMap>
+#include <QString>
+#include <QStringList>
+#include <QVariant>
 
-
-class MprisRootInterface;
-class MprisPlayerInterface;
 class QDBusPendingCallWatcher;
+class MprisControllerPrivate;
+
 class MPRIS_QT_EXPORT MprisController : public QObject
 {
     Q_OBJECT
 
     Q_PROPERTY(QString service READ service)
+
+    Q_PROPERTY(int positionInterval READ positionInterval WRITE setPositionInterval NOTIFY positionIntervalChanged)
 
     // Mpris2 Root Interface
     Q_PROPERTY(bool canQuit READ canQuit NOTIFY canQuitChanged)
@@ -70,7 +72,7 @@ class MPRIS_QT_EXPORT MprisController : public QObject
     Q_PROPERTY(bool canSeek READ canSeek NOTIFY canSeekChanged)
     Q_PROPERTY(Mpris::LoopStatus loopStatus READ loopStatus WRITE setLoopStatus NOTIFY loopStatusChanged)
     Q_PROPERTY(double maximumRate READ maximumRate NOTIFY maximumRateChanged)
-    Q_PROPERTY(QVariantMap metadata READ metadata NOTIFY metadataChanged)
+    Q_PROPERTY(MprisMetaData *metadata READ metadata)
     Q_PROPERTY(double minimumRate READ minimumRate NOTIFY minimumRateChanged)
     Q_PROPERTY(Mpris::PlaybackStatus playbackStatus READ playbackStatus NOTIFY playbackStatusChanged)
     Q_PROPERTY(qlonglong position READ position)
@@ -84,6 +86,9 @@ public:
     ~MprisController();
 
     bool isValid() const;
+
+    int positionInterval() const;
+    void setPositionInterval(int interval);
 
     // Mpris2 Root Interface
     bool quit();
@@ -100,8 +105,6 @@ public:
     bool setPosition(qlonglong position);
     bool setPosition(const QString &aTrackId, qlonglong position);
     bool stop();
-
-public Q_SLOTS:
 
     QString service() const;
 
@@ -143,7 +146,7 @@ public Q_SLOTS:
 
     double maximumRate() const;
 
-    QVariantMap metadata() const;
+    MprisMetaData *metadata() const;
 
     double minimumRate() const;
 
@@ -162,6 +165,8 @@ public Q_SLOTS:
     void setVolume(double volume);
 
 Q_SIGNALS:
+
+    void positionIntervalChanged();
 
     // Mpris2 Root Interface
     void canQuitChanged();
@@ -183,7 +188,6 @@ Q_SIGNALS:
     void canSeekChanged();
     void loopStatusChanged();
     void maximumRateChanged();
-    void metadataChanged();
     void minimumRateChanged();
     void playbackStatusChanged();
     void positionChanged(qlonglong position);
@@ -192,21 +196,8 @@ Q_SIGNALS:
     void volumeChanged();
     void seeked(qlonglong position);
 
-protected Q_SLOTS:
-    void onAsyncGetAllRootPropertiesFinished();
-    void onAsyncGetAllPlayerPropertiesFinished();
-    void onCanControlChanged();
-    void onPositionChanged(qlonglong aPosition);
-    void onFinishedPendingCall(QDBusPendingCallWatcher *call);
-
 private:
-    MprisRootInterface *m_mprisRootInterface;
-    MprisPlayerInterface *m_mprisPlayerInterface;
-
-    mutable bool m_initedRootInterface;
-    mutable bool m_initedPlayerInterface;
-    mutable bool m_requestedPosition;
-    bool m_canControlReceived;
+    MprisControllerPrivate *priv;
 };
 
 #endif /* MPRISCONTROLLER_H */

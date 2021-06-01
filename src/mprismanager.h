@@ -26,23 +26,22 @@
 #ifndef MPRISMANAGER_H
 #define MPRISMANAGER_H
 
-#include <mprisqt.h>
 #include <Mpris>
 #include <MprisController>
 
 #include <QDBusConnection>
 #include <QDBusObjectPath>
 
-#include <QtCore/QByteArray>
-#include <QtCore/QList>
-#include <QtCore/QMap>
-#include <QtCore/QObject>
-#include <QtCore/QSharedPointer>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtCore/QVariant>
+#include <QByteArray>
+#include <QList>
+#include <QObject>
+#include <QSharedPointer>
+#include <QString>
+#include <QStringList>
 
-class QSignalMapper;
+class MprisMetaData;
+class MprisManagerPrivate;
+
 class MPRIS_QT_EXPORT MprisManager : public QObject
 {
     Q_OBJECT
@@ -71,10 +70,10 @@ class MPRIS_QT_EXPORT MprisManager : public QObject
     Q_PROPERTY(bool canSeek READ canSeek NOTIFY canSeekChanged)
     Q_PROPERTY(Mpris::LoopStatus loopStatus READ loopStatus WRITE setLoopStatus NOTIFY loopStatusChanged)
     Q_PROPERTY(double maximumRate READ maximumRate NOTIFY maximumRateChanged)
-    Q_PROPERTY(QVariantMap metadata READ metadata NOTIFY metadataChanged)
+    Q_PROPERTY(MprisMetaData *metadata READ metadata NOTIFY metadataChanged)
     Q_PROPERTY(double minimumRate READ minimumRate NOTIFY minimumRateChanged)
     Q_PROPERTY(Mpris::PlaybackStatus playbackStatus READ playbackStatus NOTIFY playbackStatusChanged)
-    Q_PROPERTY(qlonglong position READ position)
+    Q_PROPERTY(qlonglong position READ position NOTIFY positionChanged)
     Q_PROPERTY(double rate READ rate WRITE setRate NOTIFY rateChanged)
     Q_PROPERTY(bool shuffle READ shuffle WRITE setShuffle NOTIFY shuffleChanged)
     Q_PROPERTY(double volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -100,7 +99,7 @@ public:
     Q_INVOKABLE bool setPosition(const QString &trackId, qlonglong position) const;
     Q_INVOKABLE bool stop() const;
 
-public Q_SLOTS:
+public:
 
     bool singleService() const;
     void setSingleService(bool single);
@@ -148,7 +147,7 @@ public Q_SLOTS:
 
     double maximumRate() const;
 
-    QVariantMap metadata() const;
+    MprisMetaData *metadata() const;
 
     double minimumRate() const;
 
@@ -200,22 +199,8 @@ Q_SIGNALS:
     void volumeChanged();
     void seeked(qlonglong position);
 
-private Q_SLOTS:
-    void onNameOwnerChanged(const QString &service, const QString &oldOwner, const QString& newOwner);
-    void onServiceAppeared(const QString &service);
-    void onServiceVanished(const QString &service);
-    void onAvailableControllerPlaybackStatusChanged(const QString &service);
-
 private:
-    QSharedPointer<MprisController> availableController(const QString &service);
-    void setCurrentController(QSharedPointer<MprisController> controller);
-    bool checkController(const char *callerName) const;
-
-    bool m_singleService;
-    QSharedPointer<MprisController> m_currentController;
-    QList< QSharedPointer<MprisController> > m_availableControllers;
-    QList< QSharedPointer<MprisController> > m_otherPlayingControllers;
-    QSignalMapper *m_playbackStatusMapper;
+    MprisManagerPrivate *priv;
 };
 
 #endif /* MPRISMANAGER_H */

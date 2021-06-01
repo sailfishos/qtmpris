@@ -75,8 +75,8 @@ private Q_SLOTS:
     void onPropertiesChanged(const QString& interfaceName,
                              const QVariantMap& changedProperties,
                              const QStringList& invalidatedProperties);
-    void onAsyncPropertyFinished(DBusExtendedPendingCallWatcher *watcher);
-    void onAsyncSetPropertyFinished(DBusExtendedPendingCallWatcher *watcher);
+    void onAsyncPropertyFinished(QDBusPendingCallWatcher *watcher, const QString &propertyName);
+    void onAsyncSetPropertyFinished(QDBusPendingCallWatcher *watcher, const QString &propertyName, const QVariant value);
     void onAsyncGetAllPropertiesFinished(QDBusPendingCallWatcher *watcher);
 
 private:

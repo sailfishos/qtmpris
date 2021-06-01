@@ -26,10 +26,21 @@
 #ifndef MPRIS_QT_H
 #define MPRIS_QT_H
 
+#include <QDBusConnection>
+
 #if defined(MPRIS_QT_LIBRARY)
 #  define MPRIS_QT_EXPORT Q_DECL_EXPORT
 #else
 #  define MPRIS_QT_EXPORT Q_DECL_IMPORT
 #endif
+
+static inline QDBusConnection getDBusConnection()
+{
+#ifdef USE_SYSTEM_DBUS
+    return QDBusConnection::systemBus();
+#else
+    return QDBusConnection::sessionBus();
+#endif
+}
 
 #endif /* MPRIS_QT_H */

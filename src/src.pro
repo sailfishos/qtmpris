@@ -6,6 +6,7 @@ CONFIG += qt link_pkgconfig no_keywords
 QT = core dbus
 
 TARGET = $${MPRISQTLIB}
+VERSION = 2.0.0
 
 QMAKE_SUBSTITUTES = $${TARGET}.prf.in
 
@@ -26,35 +27,46 @@ CONFIG += create_pc create_prl no_install_prl
 
 SOURCES += \
     mpris.cpp \
-    mprisrootadaptor.cpp \
-    mprisplayeradaptor.cpp \
-    mprisplayer.cpp \
     mpriscontroller.cpp \
     mprismanager.cpp \
+    mprismetadata.cpp \
+    mprisplayer.cpp \
+    mprisplayeradaptor.cpp \
     mprisplayerinterface.cpp \
-    mprisrootinterface.cpp
+    mprisrootinterface.cpp \
+    mprisservice.cpp \
+    mprisserviceadaptor.cpp
 
 HEADERS += \
-    mprisqt.h \
     mpris.h \
-    mprisplayer.h \
-    mprisplayer_p.h \
     mpriscontroller.h \
     mpriscontroller_p.h \
-    mprismanager.h
+    mprismanager.h \
+    mprismetadata.h \
+    mprismetadata_p.h \
+    mprisplayeradaptor_p.h \
+    mprisplayer.h \
+    mprisplayer_p.h \
+    mprisqt.h \
+    mprisserviceadaptor_p.h \
+    mprisservice.h \
+    mprisservice_p.h
 
 INSTALL_HEADERS = \
     Mpris \
     MprisPlayer \
     MprisController \
     MprisManager \
-    mprisqt.h \
+    MprisService \
     mpris.h \
-    mprisplayer.h \
     mpriscontroller.h \
-    mprismanager.h
+    mprismanager.h \
+    mprisplayer.h \
+    mprisqt.h \
+    mprisservice.h
 
-OTHER_FILES += org.mpris.MediaPlayer2.xml \
+OTHER_FILES += \
+    org.mpris.MediaPlayer2.xml \
     org.mpris.MediaPlayer2.Player.xml
 
 target.path = $$[QT_INSTALL_LIBS]
