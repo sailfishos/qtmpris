@@ -170,7 +170,7 @@ QVariantMap MprisMetaDataPrivate::typedMetaData() const
 
 void MprisMetaDataPrivate::setMetaData(const QString &key, const QVariant &value)
 {
-    if (m_metaData[key] != value) {
+    if (m_metaData.value(key) != value) {
         if (!value.isValid() || value.isNull()) {
             m_metaData.remove(key);
         } else {
@@ -223,17 +223,10 @@ QVariant MprisMetaData::duration() const
 
 void MprisMetaData::setDuration(const QVariant &duration)
 {
-    priv->setMetaData(MetaFieldLength, duration);
-    /*
-    if (duration != priv->m_metaData[MetaFieldLength]) {
-        if (!duration.isValid()) {
-            priv->m_metaData.remove(MetaFieldLength);
-        } else {
-            priv->m_metaData[MetaFieldLength] = duration;
-        }
-        priv->m_changedDelay.start();
-    }
-    */
+    if (duration.toLongLong() <= 0)
+        priv->setMetaData(MetaFieldLength, QVariant());
+    else
+        priv->setMetaData(MetaFieldLength, duration);
 }
 
 QVariant MprisMetaData::coverArtUrlSmall() const
@@ -273,9 +266,7 @@ QVariant MprisMetaData::albumTitle() const
 
 void MprisMetaData::setAlbumTitle(const QVariant &title)
 {
-    priv->m_metaData[MetaFieldAlbum] = title.toString();
-
-    priv->m_changedDelay.start();
+    priv->setMetaData(MetaFieldAlbum, title);
 }
 
 QVariant MprisMetaData::albumArtist() const
@@ -285,9 +276,7 @@ QVariant MprisMetaData::albumArtist() const
 
 void MprisMetaData::setAlbumArtist(const QVariant &artist)
 {
-    priv->m_metaData[MetaFieldAlbumArtist] = artist.toStringList();
-
-    priv->m_changedDelay.start();
+    priv->setMetaData(MetaFieldAlbumArtist, artist);
 }
 
 QVariant MprisMetaData::lyrics() const
@@ -297,9 +286,7 @@ QVariant MprisMetaData::lyrics() const
 
 void MprisMetaData::setLyrics(const QVariant &lyrics)
 {
-    priv->m_metaData[MetaFieldAsText] = lyrics.toString();
-
-    priv->m_changedDelay.start();
+    priv->setMetaData(MetaFieldAsText, lyrics);
 }
 
 QVariant MprisMetaData::comment() const
@@ -309,9 +296,7 @@ QVariant MprisMetaData::comment() const
 
 void MprisMetaData::setComment(const QVariant &comment)
 {
-    priv->m_metaData[MetaFieldComment] = comment.toStringList();
-
-    priv->m_changedDelay.start();
+    priv->setMetaData(MetaFieldComment, comment);
 }
 
 QVariant MprisMetaData::composer() const
@@ -321,13 +306,14 @@ QVariant MprisMetaData::composer() const
 
 void MprisMetaData::setComposer(const QVariant &composer)
 {
-    priv->m_metaData[MetaFieldComposer] = composer.toStringList();
-
-    priv->m_changedDelay.start();
+    priv->setMetaData(MetaFieldComposer, composer);
 }
 
 QVariant MprisMetaData::year() const
 {
+    if (priv->m_metaData.contains(MetaFieldInternalYear)) {
+        return priv->m_metaData[MetaFieldInternalYear];
+    }
     if (priv->m_metaData.contains(MetaFieldContentCreated) &&
         priv->m_metaData[MetaFieldContentCreated].isValid()) {
         QDateTime d = QDateTime::fromString(priv->m_metaData[MetaFieldContentCreated].toString(), Qt::ISODate);
@@ -437,7 +423,7 @@ void MprisMetaData::setAutoRating(const QVariant &rating)
 
 QVariant MprisMetaData::firstUsed() const
 {
-    return priv->m_metaData.value(MetaFieldFirstUsed).toDateTime();
+    return priv->m_metaData.value(MetaFieldFirstUsed);
 }
 
 void MprisMetaData::setFirstUsed(const QVariant &used)
@@ -447,7 +433,7 @@ void MprisMetaData::setFirstUsed(const QVariant &used)
 
 QVariant MprisMetaData::lastUsed() const
 {
-    return priv->m_metaData.value(MetaFieldLastUsed).toDateTime();
+    return priv->m_metaData.value(MetaFieldLastUsed);
 }
 
 void MprisMetaData::setLastUsed(const QVariant &used)

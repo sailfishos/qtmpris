@@ -20,10 +20,14 @@ QMAKE_SUBSTITUTES = qmldir.in
 
 SOURCES += \
     declarativemprisplayer.cpp \
+    legacympris.cpp \
+    legacymprisplayer.cpp \
     mprisplugin.cpp
 
 HEADERS += \
     declarativemprisplayer_p.h \
+    legacympris_p.h \
+    legacymprisplayer_p.h \
     mprisplugin.h
 
 target.path = $$[QT_INSTALL_QML]/$$PLUGIN_IMPORT_PATH

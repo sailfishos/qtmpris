@@ -41,7 +41,7 @@ public:
     bool canSeek() const;
     Mpris::LoopStatus loopStatus() const;
     double maximumRate() const;
-    MprisMetaData *metaData();
+    MprisMetaData *metaData() const;
     double minimumRate() const;
     Mpris::PlaybackStatus playbackStatus() const;
     virtual qlonglong position() const;

@@ -272,7 +272,7 @@ double MprisPlayer::maximumRate() const
     return static_cast<MprisPlayerPrivate *>(priv)->m_maximumRate;
 }
 
-MprisMetaData *MprisPlayer::metaData()
+MprisMetaData *MprisPlayer::metaData() const
 {
     return &static_cast<MprisPlayerPrivate *>(priv)->m_metaData;
 }

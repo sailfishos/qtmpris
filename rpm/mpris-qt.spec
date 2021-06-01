@@ -42,6 +42,9 @@ make %{?_smp_mflags}
 rm -rf %{buildroot}
 
 %qmake5_install
+mkdir -p %{buildroot}%{_libdir}/qt5/qml/org/nemomobile/mpris
+ln -sf %{_libdir}/qt5/qml/Amber/Mpris/libmpris-qt5-qml-plugin.so %{buildroot}%{_libdir}/qt5/qml/org/nemomobile/mpris/
+sed 's/Amber\.Mpris/org.nemomobile.mpris/' < declarative/qmldir > %{buildroot}%{_libdir}/qt5/qml/org/nemomobile/mpris/qmldir
 
 %post -p /sbin/ldconfig
 
@@ -76,3 +79,5 @@ rm -rf %{buildroot}
 %{_libdir}/qt5/qml/Amber/Mpris/plugins.qmltypes
 %{_libdir}/qt5/qml/Amber/Mpris/qmldir
 %{_libdir}/qt5/qml/Amber/Mpris/MprisAudio.qml
+%{_libdir}/qt5/qml/org/nemomobile/mpris/libmpris-qt5-qml-plugin.so
+%{_libdir}/qt5/qml/org/nemomobile/mpris/qmldir
