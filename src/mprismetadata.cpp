@@ -143,6 +143,7 @@ QVariantMap MprisMetaDataPrivate::typedMetaData() const
 {
     QVariantMap rv;
 
+    (void)m_metaData[MetaFieldTrackId];
     for (auto c = m_metaData.cbegin();
          c != m_metaData.cend();
          ++c) {
@@ -163,6 +164,10 @@ QVariantMap MprisMetaDataPrivate::typedMetaData() const
         } else if (c.key().count(':') == 1 && !c.key().startsWith(QLatin1String("mpris:")) && !c.key().startsWith(QLatin1String("xesam:"))) {
             rv[c.key()] = c.value();
         }
+    }
+
+    if (!rv.contains(MetaFieldTrackId)) {
+        rv[MetaFieldTrackId] = converters[MetaFieldTrackId](QVariant());
     }
 
     return rv;

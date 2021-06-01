@@ -21,16 +21,18 @@ MprisPlayer {
     canControl: true
     canPlay: true
 
-    canGoNext: playlist.currentIndex < playlist.itemCount - 1 || loopStatus != Mpris.None
-    canGoPrevious: playlist.currentIndex > 0 || loopStatus != Mpris.None
+    canGoNext: playlist && playlist.currentIndex < playlist.itemCount - 1 || loopStatus != Mpris.None
+    canGoPrevious: playlist && playlist.currentIndex > 0 || loopStatus != Mpris.None
     canPause: true
 
     canSeek: player.seekable
     metaData.fillFrom: player.metaData
     metaData.url: player.source
-    metaData.trackId: playlist.currentIndex
+    metaData.trackId: playlist && playlist.currentIndex >= 0 ? playlist.currentIndex : null
 
     loopStatus: {
+        if (!playlist)
+            return Mpris.None
         if (playlist.playbackMode == Playlist.Random)
             return Mpris.Playlist
         _oldLoopStatus = playlist.playbackMode
@@ -41,17 +43,19 @@ MprisPlayer {
         return Mpris.None
     }
 
-    shuffle: playlist.playbackMode == Playlist.Random
+    shuffle: playlist ? playlist.playbackMode == Playlist.Random : false
     rate: player.playbackRate
     volume: player.muted ? 0 : player.volume
     onPlayRequested: player.play()
     onStopRequested: player.stop()
     onPauseRequested: player.pause()
     onPlayPauseRequested: if (player.playbackState == Audio.PlayingState) { player.pause() } else { player.play() }
-    onNextRequested: player.playlist.next()
-    onPreviousRequested: player.playlist.previous()
-    onShuffleRequested: playlist.playbackMode = (shuffle ? Playlist.Random : _oldLoopStatus)
+    onNextRequested: if (playlist) { playlist.next() }
+    onPreviousRequested: if (playlist) { playlist.previous() }
+    onShuffleRequested: if (playlist) { playlist.playbackMode = (shuffle ? Playlist.Random : _oldLoopStatus) }
     onLoopStatusRequested: {
+        if (!playlist)
+            return
         if (loopStatus == Mpris.Track)
             playlist.playbackMode = Playlist.CurrentItemInLoop
         else if (loopStatus == Mpris.Playlist)
@@ -61,7 +65,7 @@ MprisPlayer {
     }
 
     onSetPositionRequested: {
-        if (playlist.currentIndex == trackId)
+        if (!playlist || playlist.currentIndex == trackId)
             player.seek(position)
     }
 
