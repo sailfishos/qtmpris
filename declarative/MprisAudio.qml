@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtMultimedia 5.6
-import org.sailfishos.mpris 1.0
+import Amber.Mpris 1.0
 
 MprisPlayer {
     property Audio player: parent

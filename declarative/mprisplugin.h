@@ -33,7 +33,7 @@
 class MprisPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.nemomobile.mpris")
+    Q_PLUGIN_METADATA(IID "Amber.Mpris")
 
 public:
     MprisPlugin(QObject *parent = 0);

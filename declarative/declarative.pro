@@ -14,7 +14,7 @@ EXAMPLE = ../example/declarative/*
 OTHER_FILES += $${EXAMPLE}
 
 TARGET = $${MPRISQTLIB}-qml-plugin
-PLUGIN_IMPORT_PATH = Sailfish/Mpris
+PLUGIN_IMPORT_PATH = Amber/Mpris
 
 QMAKE_SUBSTITUTES = qmldir.in
 
@@ -35,5 +35,5 @@ qml.files = \
 qml.path = $$target.path
 INSTALLS += target qml
 
-qmltypes.commands = qmlplugindump -nonrelocatable org.nemomobile.mpris 1.0 > $$PWD/plugins.qmltypes
+qmltypes.commands = qmlplugindump -nonrelocatable Amber.Mpris 1.0 > $$PWD/plugins.qmltypes
 QMAKE_EXTRA_TARGETS += qmltypes

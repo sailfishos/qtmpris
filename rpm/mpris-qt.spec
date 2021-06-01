@@ -72,7 +72,7 @@ rm -rf %{buildroot}
 
 %files qml-plugin
 %defattr(-,root,root,-)
-%{_libdir}/qt5/qml/Sailfish/Mpris/libmpris-qt5-qml-plugin.so
-%{_libdir}/qt5/qml/Sailfish/Mpris/plugins.qmltypes
-%{_libdir}/qt5/qml/Sailfish/Mpris/qmldir
-%{_libdir}/qt5/qml/Sailfish/Mpris/MprisAudio.qml
+%{_libdir}/qt5/qml/Amber/Mpris/libmpris-qt5-qml-plugin.so
+%{_libdir}/qt5/qml/Amber/Mpris/plugins.qmltypes
+%{_libdir}/qt5/qml/Amber/Mpris/qmldir
+%{_libdir}/qt5/qml/Amber/Mpris/MprisAudio.qml

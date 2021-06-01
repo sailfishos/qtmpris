@@ -1,3 +1,4 @@
-module org.nemomobile.mpris
+module Amber.Mpris
 plugin $${TARGET}
 typeinfo plugins.qmltypes
+MprisAudio 1.0 MprisAudio.qml
