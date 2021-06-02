@@ -21,12 +21,16 @@ QMAKE_SUBSTITUTES = qmldir.in
 SOURCES += \
     declarativemprisplayer.cpp \
     legacympris.cpp \
+    legacympriscommon.cpp \
+    legacymprismanager.cpp \
     legacymprisplayer.cpp \
     mprisplugin.cpp
 
 HEADERS += \
     declarativemprisplayer_p.h \
     legacympris_p.h \
+    legacympriscommon_p.h \
+    legacymprismanager_p.h \
     legacymprisplayer_p.h \
     mprisplugin.h
 

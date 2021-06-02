@@ -16,6 +16,9 @@ public:
     QVariantMap metadata() const;
     void setMetadata(const QVariantMap &metadata);
 
+    void setPosition(qlonglong position);
+    qlonglong position() const;
+
 Q_SIGNALS:
     void metadataChanged();
 };

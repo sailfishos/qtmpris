@@ -362,7 +362,7 @@ bool MprisController::setPosition(qlonglong position)
         return false;
     }
 
-    QVariant trackId = metadata()->trackId();
+    QVariant trackId = metaData()->trackId();
     if (!trackId.isValid()) {
         qDebug() << Q_FUNC_INFO << "Unknown trackId in which to set the position";
         return false;
@@ -384,7 +384,7 @@ bool MprisController::setPosition(const QString &aTrackId, qlonglong position)
         return false;
     }
 
-    QVariant length = metadata()->duration();
+    QVariant length = metaData()->duration();
     if (length.isValid()) {
         qlonglong reportedLength = length.toLongLong();
 
@@ -599,7 +599,7 @@ double MprisController::maximumRate() const
     return 1;
 }
 
-MprisMetaData *MprisController::metadata() const
+MprisMetaData *MprisController::metaData() const
 {
     return &priv->m_metaData;
 }

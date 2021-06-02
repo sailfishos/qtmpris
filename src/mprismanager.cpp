@@ -331,9 +331,9 @@ double MprisManager::maximumRate() const
     return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->maximumRate() : 1;
 }
 
-MprisMetaData *MprisManager::metadata() const
+MprisMetaData *MprisManager::metaData() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->metadata() : NULL;
+    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->metaData() : NULL;
 }
 
 double MprisManager::minimumRate() const
@@ -614,7 +614,7 @@ void MprisManagerPrivate::setCurrentController(QSharedPointer<MprisController> c
     }
 
     Q_EMIT parent()->currentServiceChanged();
-    Q_EMIT parent()->metadataChanged();
+    Q_EMIT parent()->metaDataChanged();
 }
 
 bool MprisManagerPrivate::checkController(const char *callerName) const

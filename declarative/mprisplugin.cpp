@@ -31,8 +31,9 @@
 #include <MprisController>
 #include <MprisMetaData>
 #include "declarativemprisplayer_p.h"
-#include "legacymprisplayer_p.h"
 #include "legacympris_p.h"
+#include "legacymprismanager_p.h"
+#include "legacymprisplayer_p.h"
 
 #include <qqml.h>
 
@@ -60,4 +61,5 @@ void MprisPlugin::registerTypes(const char *uri)
 
     qmlRegisterSingletonType<LegacyMpris>(uri, 1, 0, "Mpris", api_factory<LegacyMpris>);
     qmlRegisterType<LegacyMprisPlayer>(uri, 1, 0, "MprisPlayer");
+    qmlRegisterType<LegacyMprisManager>(uri, 1, 0, "MprisPlayer");
 }
