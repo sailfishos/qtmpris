@@ -183,7 +183,7 @@ void MprisPlayerPrivate::Seek(qlonglong Offset)
     } else if (!parent()->canSeek()) {
         sendErrorReply(QDBusError::Failed, QStringLiteral("The operation can not be performed"));
     } else {
-        Q_EMIT parent()->seekRequested(Offset);
+        Q_EMIT parent()->seekRequested(Offset / 1000);
     }
 }
 
@@ -191,11 +191,13 @@ void MprisPlayerPrivate::SetPosition(const QDBusObjectPath &TrackId, qlonglong p
 {
     if (!parent()->canControl()) {
         sendErrorReply(QDBusError::NotSupported, QStringLiteral("The operation is not supported"));
+    } else if (!parent()->canSeek()) {
+        sendErrorReply(QDBusError::Failed, QStringLiteral("The operation can not be performed"));
     } else {
         QString tid = TrackId.path();
         if (tid.startsWith(TrackPrefix))
             tid = tid.mid(TrackPrefix.size());
-        Q_EMIT parent()->setPositionRequested(tid, position);
+        Q_EMIT parent()->setPositionRequested(tid, position / 1000);
     }
 }
 
@@ -216,6 +218,7 @@ QVariantMap MprisPlayerPrivate::metaData() const
 MprisPlayer::MprisPlayer(QObject *parent) :
     MprisService(new MprisPlayerPrivate, parent)
 {
+    connect(this, &MprisPlayer::seeked, priv, [this](qlonglong position) { Q_EMIT static_cast<MprisPlayerPrivate *>(priv)->m_dbusAdaptor.Seeked(position * 1000); });
 }
 
 MprisPlayer::~MprisPlayer()

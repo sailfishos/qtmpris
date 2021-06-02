@@ -5,7 +5,10 @@ import Amber.Mpris 2.0
 MprisPlayer {
     property Audio player: parent
     property Playlist playlist: player ? player.playlist : null
+    property bool seekDetection: true
     property int _oldLoopStatus: Playlist.Sequential
+    property var _oldPosition: 0
+    property var _oldStamp
 
     playbackStatus: {
         switch (player.playbackState) {
@@ -65,8 +68,54 @@ MprisPlayer {
     }
 
     onSetPositionRequested: {
-        if (!playlist || playlist.currentIndex == trackId)
+        if (!playlist || playlist.currentIndex == trackId) {
             player.seek(position)
+            if (!seekDetection) {
+                seeked(player.position)
+            }
+        }
+    }
+
+    onSeekRequested: {
+        if (playlist && player.metaData.duration && player.position + offset >= player.metaData.duration) {
+            playlist.next()
+        } else {
+            player.seek(player.position + offset)
+            if (!seekDetection)
+                seeked(player.position)
+        }
+    }
+
+    onPlaybackStatusChanged: {
+        if (!seekDetection)
+            return;
+
+        _oldPosition = player.position
+        _oldStamp = Date.now()
+    }
+
+    property Connections _connections: Connections {
+        target: player
+        onPositionChanged: {
+            if (!seekDetection)
+                return;
+            var stamp = Date.now();
+            if ((playbackStatus != Mpris.Playing && position != _oldPosition)
+                || (_oldStamp
+                    && Math.abs((player.position - _oldPosition) - (stamp - _oldStamp) * rate) > 100)) {
+                seeked(player.position)
+            }
+
+            _oldStamp = stamp
+            _oldPosition = player.position
+        }
+
+        onSourceChanged: {
+            if (!seekDetection)
+                return;
+            _oldPosition = player.position
+            _oldStamp = Date.now()
+        }
     }
 
     function getPosition() {

@@ -207,7 +207,6 @@ void MprisService::setSupportedUriSchemes(const QStringList &supportedUriSchemes
 
 void MprisService::setSupportedMimeTypes(const QStringList &supportedMimeTypes)
 {
-    qDebug() << __PRETTY_FUNCTION__ << supportedMimeTypes;
     if (priv->m_supportedMimeTypes != supportedMimeTypes) {
         priv->m_supportedMimeTypes = supportedMimeTypes;
         priv->propertyChanged(ServiceInterface, QStringLiteral("SupportedMimeTypes"), supportedMimeTypes);
