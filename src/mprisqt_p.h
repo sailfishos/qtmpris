@@ -1,8 +1,9 @@
-// -*- c++ -*-
-
 /*!
  *
- * Copyright (C) 2015-2021 Jolla Ltd.
+ * Copyright (C) 2021 Jolla Ltd.
+ *
+ * Contact: Valerio Valerio <valerio.valerio@jolla.com>
+ * Author: Andres Gomez <andres.gomez@jolla.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,35 +20,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef MPRISQT_P_H
+#define MPRISQT_P_H
 
-#ifndef MPRIS_H
-#define MPRIS_H
+#include <QDBusConnection>
 
-#include <mprisqt.h>
-
-#include <QObject>
-#include <QString>
-
-class MPRIS_QT_EXPORT Mpris
+static inline QDBusConnection getDBusConnection()
 {
-    Q_GADGET
+#ifdef USE_SYSTEM_DBUS
+    return QDBusConnection::systemBus();
+#else
+    return QDBusConnection::sessionBus();
+#endif
+}
 
-public:
-    explicit Mpris();
-
-    enum PlaybackStatus {
-        Stopped,
-        Playing,
-        Paused
-    };
-    Q_ENUM(PlaybackStatus);
-
-    enum LoopStatus {
-        None,
-        Track,
-        Playlist
-    };
-    Q_ENUM(LoopStatus);
-};
-
-#endif /* MPRIS_H */
+#endif

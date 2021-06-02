@@ -6,7 +6,6 @@ CONFIG += qt link_pkgconfig no_keywords
 QT = core dbus
 
 TARGET = $${MPRISQTLIB}
-VERSION = 2.0.0
 
 QMAKE_SUBSTITUTES = $${TARGET}.prf.in
 
@@ -48,6 +47,7 @@ HEADERS += \
     mprisplayer.h \
     mprisplayer_p.h \
     mprisqt.h \
+    mprisqt_p.h \
     mprisserviceadaptor_p.h \
     mprisservice.h \
     mprisservice_p.h

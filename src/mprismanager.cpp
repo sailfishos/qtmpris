@@ -2,10 +2,7 @@
 
 /*!
  *
- * Copyright (C) 2015 Jolla Ltd.
- *
- * Contact: Valerio Valerio <valerio.valerio@jolla.com>
- * Author: Andres Gomez <andres.gomez@jolla.com>
+ * Copyright (C) 2015-2021 Jolla Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +23,7 @@
 #include "mprismanager.h"
 
 #include "mpriscontroller.h"
+#include "mprisqt_p.h"
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
@@ -38,17 +36,6 @@ namespace {
     const QString dBusObjectPath = QStringLiteral("/org/freedesktop/DBus");
     const QString dBusInterface = QStringLiteral("org.freedesktop.DBus");
     const QString dBusNameOwnerChangedSignal = QStringLiteral("NameOwnerChanged");
-
-    /*
-    inline QDBusConnection getDBusConnection()
-    {
-#ifdef USE_SYSTEM_DBUS
-        return QDBusConnection::systemBus();
-#else
-        return QDBusConnection::sessionBus();
-#endif
-    }
-    */
 }
 
 class MprisManagerPrivate : public QObject
