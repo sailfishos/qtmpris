@@ -668,16 +668,23 @@ void MprisMetaData::setLeadPerformer(const QVariant &performer)
 
 void MprisMetaData::setFillFrom(const QVariant &fillFrom)
 {
+    const QMetaObject *thisMeta = this->metaObject();
+
     if (priv->m_fillFromObject) {
         priv->m_fillFromObject->disconnect(priv);
         priv->m_fillFromObject.clear();
+
+        for (const auto &i : priv->m_signalPropertyMap) {
+            for (const char *prop : i) {
+                setProperty(prop, QVariant());
+            }
+        }
         priv->m_signalPropertyMap.clear();
     }
 
     priv->m_fillFromObject = qvariant_cast<QObject *>(fillFrom);
 
     if (priv->m_fillFromObject) {
-        const QMetaObject *thisMeta = this->metaObject();
         const QMetaObject *privMeta = priv->metaObject();
         const QMetaObject *thatMeta = priv->m_fillFromObject->metaObject();
         QMetaMethod fillFromChanged = privMeta->method(privMeta->indexOfSlot("fillFromPropertyChange()"));
@@ -702,7 +709,18 @@ void MprisMetaData::setFillFrom(const QVariant &fillFrom)
             }
         }
     } else {
-        QMetaType tt(fillFrom.userType());
+        if (fillFrom.userType() == qMetaTypeId<QVariantMap>()) {
+            QVariantMap map = fillFrom.toMap();
+            for (auto i = map.cbegin();
+                 i != map.cend();
+                 i++) {
+                int propertyIndex = thisMeta->indexOfProperty(i.key().toLatin1());
+
+                if (propertyIndex >= 0) {
+                    setProperty(thisMeta->property(propertyIndex).name(), i.value());
+                }
+            }
+        }
     }
 
     priv->m_fillFrom = fillFrom;
