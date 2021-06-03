@@ -20,6 +20,8 @@
 #ifndef DECLARATIVEMPRISPLAYER_P_H
 #define DECLARATIVEMPRISPLAYER_P_H
 
+#include <QObject>
+#include <QVariant>
 #include "mprisplayer.h"
 
 class MPRIS_QT_EXPORT DeclarativeMprisPlayer : public MprisPlayer

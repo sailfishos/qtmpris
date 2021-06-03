@@ -22,6 +22,7 @@
 
 #include <MprisPlayer>
 #include <QObject>
+#include <QVariant>
 
 class LegacyMprisPlayer : public MprisPlayer
 {

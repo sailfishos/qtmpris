@@ -53,8 +53,8 @@ void MprisPlugin::registerTypes(const char *uri)
     qmlRegisterUncreatableType<Mpris>(uri, 2, 0, "Mpris", QStringLiteral("Mpris is a namespace object"));
     qmlRegisterType<DeclarativeMprisPlayer>(uri, 2, 0, "MprisPlayer");
     qmlRegisterType<MprisManager>(uri, 2, 0, "MprisManager");
-    qmlRegisterUncreatableType<MprisMetaData>(uri, 2, 0, "MprisMetaData", QStringLiteral("MprisMetaData can't be created"));
-    qmlRegisterUncreatableType<MprisController>(uri, 2, 0, "MprisController", QStringLiteral("MprisMetaData can't be created"));
+    qmlRegisterUncreatableType<MprisMetaData>(uri, 2, 0, "MprisMetaData", QStringLiteral("MprisMetaData can't be instantiated, use MprisPlayer or MprisManager"));
+    qmlRegisterUncreatableType<MprisController>(uri, 2, 0, "MprisController", QStringLiteral("MprisController can't be instantiated, use MprisManager"));
 
     qmlRegisterSingletonType<LegacyMpris>(uri, 1, 0, "Mpris", api_factory<LegacyMpris>);
     qmlRegisterType<LegacyMprisPlayer>(uri, 1, 0, "MprisPlayer");
