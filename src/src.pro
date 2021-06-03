@@ -33,7 +33,6 @@ SOURCES += \
     mprisplayeradaptor.cpp \
     mprisplayerinterface.cpp \
     mprisrootinterface.cpp \
-    mprisservice.cpp \
     mprisserviceadaptor.cpp
 
 HEADERS += \
@@ -48,9 +47,7 @@ HEADERS += \
     mprisplayer_p.h \
     mprisqt.h \
     mprisqt_p.h \
-    mprisserviceadaptor_p.h \
-    mprisservice.h \
-    mprisservice_p.h
+    mprisserviceadaptor_p.h
 
 INSTALL_HEADERS = \
     Mpris \
@@ -62,8 +59,7 @@ INSTALL_HEADERS = \
     mpriscontroller.h \
     mprismanager.h \
     mprisplayer.h \
-    mprisqt.h \
-    mprisservice.h
+    mprisqt.h
 
 OTHER_FILES += \
     org.mpris.MediaPlayer2.xml \
