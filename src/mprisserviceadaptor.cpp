@@ -31,13 +31,13 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
-#include "mprisservice_p.h"
+#include "mprisplayer_p.h"
 
 /*
  * Implementation of adaptor class MprisServiceAdaptor
  */
 
-MprisServiceAdaptor::MprisServiceAdaptor(MprisServicePrivate *parent)
+MprisServiceAdaptor::MprisServiceAdaptor(MprisPlayerPrivate *parent)
     : QDBusAbstractAdaptor(parent)
 {
     // constructor
@@ -49,9 +49,9 @@ MprisServiceAdaptor::~MprisServiceAdaptor()
     // destructor
 }
 
-MprisServicePrivate *MprisServiceAdaptor::parent() const
+MprisPlayerPrivate *MprisServiceAdaptor::parent() const
 {
-    return static_cast<MprisServicePrivate *>(QObject::parent());
+    return static_cast<MprisPlayerPrivate *>(QObject::parent());
 }
 
 bool MprisServiceAdaptor::canQuit() const

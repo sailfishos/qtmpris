@@ -28,7 +28,7 @@
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
 
-class MprisServicePrivate;
+class MprisPlayerPrivate;
 
 QT_BEGIN_NAMESPACE
 class QByteArray;
@@ -78,10 +78,10 @@ class MprisServiceAdaptor: public QDBusAbstractAdaptor
 "  </interface>\n"
         "")
 public:
-    MprisServiceAdaptor(MprisServicePrivate *parent);
+    MprisServiceAdaptor(MprisPlayerPrivate *parent);
     virtual ~MprisServiceAdaptor();
 
-    MprisServicePrivate *parent() const;
+    MprisPlayerPrivate *parent() const;
 
 public: // PROPERTIES
     Q_PROPERTY(bool CanQuit READ canQuit)
