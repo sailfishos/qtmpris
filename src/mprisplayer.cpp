@@ -21,7 +21,6 @@
 #include "mprisplayeradaptor_p.h"
 #include "mprisplayer.h"
 #include "mprisplayer_p.h"
-#include "mprisservice_p.h"
 #include "mprismetadata_p.h"
 #include "mprismetadata.h"
 #include "mprisqt_p.h"

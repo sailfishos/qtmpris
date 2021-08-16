@@ -25,8 +25,8 @@
 #include <QDBusContext>
 #include "mprismetadata.h"
 #include "mprisplayeradaptor_p.h"
+#include "mprisserviceadaptor_p.h"
 #include "mprisplayer.h"
-#include "mprisservice_p.h"
 
 class MprisPlayerPrivate : public QObject, public QDBusContext
 {
