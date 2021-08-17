@@ -68,7 +68,6 @@ sed 's/Amber\.Mpris/org.nemomobile.mpris/' < declarative/qmldir > %{buildroot}%{
 %{_includedir}/qt5/MprisQt/mpriscontroller.h
 %{_includedir}/qt5/MprisQt/mprismanager.h
 %{_includedir}/qt5/MprisQt/mprisplayer.h
-%{_includedir}/qt5/MprisQt/mprisservice.h
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/%{name}.pc
 
