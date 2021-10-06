@@ -63,6 +63,7 @@ public:
     bool m_singleService;
     QSharedPointer<MprisController> m_currentController;
     QDBusConnection m_connection;
+    MprisMetaData m_dummyMetaData;
     QList< QSharedPointer<MprisController> > m_availableControllers;
     QList< QSharedPointer<MprisController> > m_otherPlayingControllers;
 };
@@ -71,6 +72,7 @@ MprisManagerPrivate::MprisManagerPrivate(MprisManager *parent)
     : QObject(parent)
     , m_singleService(false)
     , m_connection(getDBusConnection())
+    , m_dummyMetaData(this)
 {
     if (!m_connection.isConnected()) {
         qWarning() << "Mpris: Failed attempting to connect to DBus";
@@ -286,37 +288,37 @@ QStringList MprisManager::supportedMimeTypes() const
 // Mpris2 Player Interface
 bool MprisManager::canControl() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->canControl();
+    return priv->m_currentController && priv->m_currentController->canControl();
 }
 
 bool MprisManager::canGoNext() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->canGoNext();
+    return priv->m_currentController && priv->m_currentController->canGoNext();
 }
 
 bool MprisManager::canGoPrevious() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->canGoPrevious();
+    return priv->m_currentController && priv->m_currentController->canGoPrevious();
 }
 
 bool MprisManager::canPause() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->canPause();
+    return priv->m_currentController && priv->m_currentController->canPause();
 }
 
 bool MprisManager::canPlay() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->canPlay();
+    return priv->m_currentController && priv->m_currentController->canPlay();
 }
 
 bool MprisManager::canSeek() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->canSeek();
+    return priv->m_currentController && priv->m_currentController->canSeek();
 }
 
 Mpris::LoopStatus MprisManager::loopStatus() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->loopStatus() : Mpris::None;
+    return priv->m_currentController ? priv->m_currentController->loopStatus() : Mpris::None;
 }
 
 void MprisManager::setLoopStatus(Mpris::LoopStatus loopStatus)
@@ -328,27 +330,27 @@ void MprisManager::setLoopStatus(Mpris::LoopStatus loopStatus)
 
 double MprisManager::maximumRate() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->maximumRate() : 1;
+    return priv->m_currentController ? priv->m_currentController->maximumRate() : 1;
 }
 
-MprisMetaData *MprisManager::metaData() const
+const MprisMetaData *MprisManager::metaData() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->metaData() : NULL;
+    return priv->m_currentController ? priv->m_currentController->metaData() : &priv->m_dummyMetaData;
 }
 
 double MprisManager::minimumRate() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->minimumRate() : 1;
+    return priv->m_currentController ? priv->m_currentController->minimumRate() : 1;
 }
 
 Mpris::PlaybackStatus MprisManager::playbackStatus() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->playbackStatus() : Mpris::Stopped;
+    return priv->m_currentController ? priv->m_currentController->playbackStatus() : Mpris::Stopped;
 }
 
 qlonglong MprisManager::position() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->position() : 0;
+    return priv->m_currentController ? priv->m_currentController->position() : 0;
 }
 
 void MprisManager::requestPosition() const
@@ -360,7 +362,7 @@ void MprisManager::requestPosition() const
 
 double MprisManager::rate() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->rate() : 1;
+    return priv->m_currentController ? priv->m_currentController->rate() : 1;
 }
 
 void MprisManager::setRate(double rate)
@@ -372,7 +374,7 @@ void MprisManager::setRate(double rate)
 
 bool MprisManager::shuffle() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->shuffle();
+    return priv->m_currentController && priv->m_currentController->shuffle();
 }
 
 void MprisManager::setShuffle(bool shuffle)
@@ -384,7 +386,7 @@ void MprisManager::setShuffle(bool shuffle)
 
 double MprisManager::volume() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->volume() : 0;
+    return priv->m_currentController ? priv->m_currentController->volume() : 0;
 }
 
 void MprisManager::setVolume(double volume)
@@ -577,7 +579,102 @@ void MprisManagerPrivate::setCurrentController(QSharedPointer<MprisController> c
         }
     }
 
+    bool oldCanQuit = parent()->canQuit();
+    bool oldCanRaise = parent()->canRaise();
+    bool oldCanSetFullscreen = parent()->canSetFullscreen();
+    QString oldDesktopEntry = parent()->desktopEntry();
+    bool oldFullscreen = parent()->fullscreen();
+    bool oldHasTrackList = parent()->hasTrackList();
+    QString oldIdentity = parent()->identity();
+    QStringList oldSupportedUriSchemes = parent()->supportedUriSchemes();
+    QStringList oldSupportedMimeTypes = parent()->supportedMimeTypes();
+    bool oldCanControl = parent()->canControl();
+    bool oldCanGoNext = parent()->canGoNext();
+    bool oldCanGoPrevious = parent()->canGoPrevious();
+    bool oldCanPause = parent()->canPause();
+    bool oldCanPlay = parent()->canPlay();
+    bool oldCanSeek = parent()->canSeek();
+    Mpris::LoopStatus oldLoopStatus = parent()->loopStatus();
+    double oldMaximumRate = parent()->maximumRate();
+    const MprisMetaData *oldMetaData = parent()->metaData();
+    double oldMinimumRate = parent()->minimumRate();
+    Mpris::PlaybackStatus oldPlaybackStatus = parent()->playbackStatus();
+    double oldRate = parent()->rate();
+    bool oldShuffle = parent()->shuffle();
+    double oldVolume = parent()->volume();
+
     m_currentController = controller;
+
+    if (oldCanQuit != parent()->canQuit()) {
+        Q_EMIT parent()->canQuitChanged();
+    }
+    if (oldCanRaise != parent()->canRaise()) {
+        Q_EMIT parent()->canRaiseChanged();
+    }
+    if (oldCanSetFullscreen != parent()->canSetFullscreen()) {
+        Q_EMIT parent()->canSetFullscreenChanged();
+    }
+    if (oldDesktopEntry != parent()->desktopEntry()) {
+        Q_EMIT parent()->desktopEntryChanged();
+    }
+    if (oldFullscreen != parent()->fullscreen()) {
+        Q_EMIT parent()->fullscreenChanged();
+    }
+    if (oldHasTrackList != parent()->hasTrackList()) {
+        Q_EMIT parent()->hasTrackListChanged();
+    }
+    if (oldIdentity != parent()->identity()) {
+        Q_EMIT parent()->identityChanged();
+    }
+    if (oldSupportedUriSchemes != parent()->supportedUriSchemes()) {
+        Q_EMIT parent()->supportedUriSchemesChanged();
+    }
+    if (oldSupportedMimeTypes != parent()->supportedMimeTypes()) {
+        Q_EMIT parent()->supportedMimeTypesChanged();
+    }
+
+    if (oldCanControl != parent()->canControl()) {
+        Q_EMIT parent()->canControlChanged();
+    }
+    if (oldCanGoNext != parent()->canGoNext()) {
+        Q_EMIT parent()->canGoNextChanged();
+    }
+    if (oldCanGoPrevious != parent()->canGoPrevious()) {
+        Q_EMIT parent()->canGoPreviousChanged();
+    }
+    if (oldCanPause != parent()->canPause()) {
+        Q_EMIT parent()->canPauseChanged();
+    }
+    if (oldCanPlay != parent()->canPlay()) {
+        Q_EMIT parent()->canPlayChanged();
+    }
+    if (oldCanSeek != parent()->canSeek()) {
+        Q_EMIT parent()->canSeekChanged();
+    }
+    if (oldLoopStatus != parent()->loopStatus()) {
+        Q_EMIT parent()->loopStatusChanged();
+    }
+    if (oldMaximumRate != parent()->maximumRate()) {
+        Q_EMIT parent()->maximumRateChanged();
+    }
+    if (oldMetaData != parent()->metaData()) {
+        Q_EMIT parent()->metaDataChanged();
+    }
+    if (oldMinimumRate != parent()->minimumRate()) {
+        Q_EMIT parent()->minimumRateChanged();
+    }
+    if (oldPlaybackStatus != parent()->playbackStatus()) {
+        Q_EMIT parent()->playbackStatusChanged();
+    }
+    if (oldRate != parent()->rate()) {
+        Q_EMIT parent()->rateChanged();
+    }
+    if (oldShuffle != parent()->shuffle()) {
+        Q_EMIT parent()->shuffleChanged();
+    }
+    if (oldVolume != parent()->volume()) {
+        Q_EMIT parent()->volumeChanged();
+    }
 
     if (!m_currentController.isNull()) {
         // Mpris Root Interface
@@ -615,6 +712,7 @@ void MprisManagerPrivate::setCurrentController(QSharedPointer<MprisController> c
 
     Q_EMIT parent()->currentServiceChanged();
     Q_EMIT parent()->metaDataChanged();
+    Q_EMIT parent()->positionChanged(parent()->position());
 }
 
 bool MprisManagerPrivate::checkController(const char *callerName) const

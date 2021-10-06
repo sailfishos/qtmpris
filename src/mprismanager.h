@@ -67,7 +67,7 @@ class MPRIS_QT_EXPORT MprisManager : public QObject
     Q_PROPERTY(bool canSeek READ canSeek NOTIFY canSeekChanged)
     Q_PROPERTY(Mpris::LoopStatus loopStatus READ loopStatus WRITE setLoopStatus NOTIFY loopStatusChanged)
     Q_PROPERTY(double maximumRate READ maximumRate NOTIFY maximumRateChanged)
-    Q_PROPERTY(MprisMetaData *metaData READ metaData NOTIFY metaDataChanged)
+    Q_PROPERTY(const MprisMetaData *metaData READ metaData NOTIFY metaDataChanged)
     Q_PROPERTY(double minimumRate READ minimumRate NOTIFY minimumRateChanged)
     Q_PROPERTY(Mpris::PlaybackStatus playbackStatus READ playbackStatus NOTIFY playbackStatusChanged)
     Q_PROPERTY(qlonglong position READ position NOTIFY positionChanged)
@@ -144,7 +144,7 @@ public:
 
     double maximumRate() const;
 
-    MprisMetaData *metaData() const;
+    const MprisMetaData *metaData() const;
 
     double minimumRate() const;
 
