@@ -66,6 +66,7 @@ public:
     mutable bool m_requestedPosition;
     bool m_canControlReceived;
     int m_syncInterval;
+    unsigned m_positionConnected;
     qlonglong m_lastPosition;
     qlonglong m_lastStamp;
 };
@@ -81,6 +82,7 @@ MprisControllerPrivate::MprisControllerPrivate(const QString &service, const QDB
     , m_requestedPosition(false)
     , m_canControlReceived(false)
     , m_syncInterval(5000)
+    , m_positionConnected(0)
     , m_lastPosition(-1)
     , m_lastStamp(-1)
 {
@@ -707,6 +709,23 @@ void MprisController::setVolume(double volume)
     }
 }
 
+void MprisController::connectNotify(const QMetaMethod &method)
+{
+    if (method == QMetaMethod::fromSignal(&MprisController::positionChanged)) {
+        if (!priv->m_positionConnected++ && playbackStatus() == Mpris::Playing) {
+            priv->m_positionTimer.start();
+        }
+    }
+}
+
+void MprisController::disconnectNotify(const QMetaMethod &method)
+{
+    if (method == QMetaMethod::fromSignal(&MprisController::positionChanged)) {
+        if (!--priv->m_positionConnected) {
+            priv->m_positionTimer.stop();
+        }
+    }
+}
 
 // Protected
 
@@ -797,7 +816,9 @@ void MprisControllerPrivate::onPlaybackStatusChanged()
 
     case Mpris::Playing:
         m_lastStamp = QDateTime::currentMSecsSinceEpoch();
-        m_positionTimer.start();
+        if (m_positionConnected) {
+            m_positionTimer.start();
+        }
         break;
     }
 

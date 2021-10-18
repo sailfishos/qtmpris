@@ -30,6 +30,7 @@
 #include <QtDBus/QDBusPendingCall>
 #include <QtDBus/QDBusPendingCallWatcher>
 #include <QtDBus/QDBusPendingReply>
+#include <QtDBus/QDBusVariant>
 
 #include <QtCore/QDebug>
 #include <QtCore/QMetaProperty>
@@ -207,8 +208,9 @@ QVariant DBusExtendedAbstractInterface::internalPropGet(const char *propname, vo
     }
 }
 
-void DBusExtendedAbstractInterface::internalPropSet(const char *propname, const QVariant &value, void *propertyPtr)
+void DBusExtendedAbstractInterface::internalPropSet(const char *propname, const QVariant &value, void *dummy)
 {
+    (void)dummy;
     m_lastExtendedError = QDBusError();
 
     if (m_sync) {
@@ -241,7 +243,9 @@ void DBusExtendedAbstractInterface::internalPropSet(const char *propname, const 
             return;
         }
 
-        asyncSetProperty(propname, QVariant(metaProperty.type(), propertyPtr));
+        QVariant convertedValue(value);
+        convertedValue.convert(metaProperty.type());
+        asyncSetProperty(propname, convertedValue);
     }
 }
 
@@ -260,7 +264,7 @@ QVariant DBusExtendedAbstractInterface::asyncProperty(const QString &propertyNam
 void DBusExtendedAbstractInterface::asyncSetProperty(const QString &propertyName, const QVariant &value)
 {
     QDBusMessage msg = QDBusMessage::createMethodCall(service(), path(), *dBusPropertiesInterface(), QStringLiteral("Set"));
-    msg << interface() << propertyName << value;
+    msg << interface() << propertyName << QVariant::fromValue(QDBusVariant(value));
     QDBusPendingReply<QVariant> async = connection().asyncCall(msg);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(async, this);
 

@@ -22,7 +22,7 @@
 
 
 import QtQuick 2.0
-import org.nemomobile.qtmpris 1.0
+import Amber.Mpris 1.0
 
 Item {
     id: mainItem
@@ -98,7 +98,7 @@ Item {
                 width: column.parent.width * 0.25
                 height: width
 
-                onClicked: mprisPlayer.artist = artistInput.text
+                onClicked: mprisPlayer.metaData.contributingArtist = artistInput.text
 
                 Text {
                     anchors.centerIn: parent
@@ -134,7 +134,7 @@ Item {
                 width: column.parent.width * 0.25
                 height: width
 
-                onClicked: mprisPlayer.song = songInput.text
+                onClicked: mprisPlayer.metaData.title = songInput.text
 
                 Text {
                     anchors.centerIn: parent
@@ -157,9 +157,6 @@ Item {
     MprisPlayer {
         id: mprisPlayer
 
-        property string artist
-        property string song
-
         serviceName: "qtmpris"
 
         // Mpris2 Root Interface
@@ -173,7 +170,7 @@ Item {
         canGoNext: true
         canGoPrevious: true
         canPause: playbackStatus == Mpris.Playing
-        canPlay: playbackStatus != Mpris.Playing
+        canPlay: true
         canSeek: false
 
         playbackStatus: Mpris.Stopped
@@ -205,21 +202,5 @@ Item {
             }
         }
         onShuffleRequested: shuffleSwitch.checked = shuffle
-
-        onArtistChanged: {
-            var metadata = mprisPlayer.metadata
-
-            metadata[Mpris.metadataToString(Mpris.Artist)] = [artist] // List of strings
-
-            mprisPlayer.metadata = metadata
-        }
-
-        onSongChanged: {
-            var metadata = mprisPlayer.metadata
-
-            metadata[Mpris.metadataToString(Mpris.Title)] = song // String
-
-            mprisPlayer.metadata = metadata
-        }
     }
 }

@@ -1,9 +1,8 @@
-/*!
+// -*- c++ -*-
+
+/*
  *
- * Copyright (C) 2015 Jolla Ltd.
- *
- * Contact: Valerio Valerio <valerio.valerio@jolla.com>
- * Author: Andres Gomez <andres.gomez@jolla.com>
+ * Copyright (C) 2015-2021 Jolla Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,23 +20,31 @@
  */
 
 
-import QtQuick 2.0
-import Amber.Mpris 1.0
+#include "mprisplugin.h"
 
-Item {
-    id: mainItem
+#include "legacympris_p.h"
+#include "legacymprismanager_p.h"
+#include "legacymprisplayer_p.h"
 
-    anchors.fill: parent
+#include <qqml.h>
 
-    Loader {
-        id: controlsLoader
+template<class T> QObject *api_factory(QQmlEngine *, QJSEngine *)
+{
+    return new T;
+}
 
-        active: mprisManager.availableServices.length > 0
+LegacyMprisPlugin::MprisPlugin(QObject *parent) :
+    QQmlExtensionPlugin(parent)
+{
+}
 
-        Component.onCompleted: setSource("MprisControls.qml", { "mprisManager": mprisManager, "parent": mainItem })
+LegacyMprisPlugin::~MprisPlugin()
+{
+}
 
-        MprisManager {
-            id: mprisManager
-        }
-    }
+void LegacyMprisPlugin::registerTypes(const char *uri)
+{
+    qmlRegisterSingletonType<LegacyMpris>(uri, 1, 0, "Mpris", api_factory<LegacyMpris>);
+    qmlRegisterType<LegacyMprisPlayer>(uri, 1, 0, "MprisPlayer");
+    qmlRegisterType<LegacyMprisManager>(uri, 1, 0, "MprisManager");
 }

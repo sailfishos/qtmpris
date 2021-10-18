@@ -257,12 +257,14 @@ void MprisMetaData::setDuration(const QVariant &duration)
 
 QVariant MprisMetaData::coverArtUrlSmall() const
 {
-    return priv->m_metaData.value(MetaFieldArtUrl);
+    return priv->m_metaData.contains(MetaFieldInternalArtUrlSmall) ?
+        priv->m_metaData.value(MetaFieldInternalArtUrlSmall) :
+        priv->m_metaData.value(MetaFieldArtUrl);
 }
 
 void MprisMetaData::setCoverArtUrlSmall(const QVariant &url)
 {
-    priv->setMetaData(MetaFieldArtUrl, url);
+    priv->setMetaData(MetaFieldInternalArtUrlSmall, url);
 }
 
 QVariant MprisMetaData::coverArtUrlLarge() const

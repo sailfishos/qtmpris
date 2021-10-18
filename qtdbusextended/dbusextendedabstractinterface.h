@@ -62,7 +62,7 @@ protected:
     void connectNotify(const QMetaMethod &signal);
     void disconnectNotify(const QMetaMethod &signal);
     QVariant internalPropGet(const char *propname, void *propertyPtr);
-    void internalPropSet(const char *propname, const QVariant &value, void *propertyPtr);
+    void internalPropSet(const char *propname, const QVariant &value, void *dummy);
 
 Q_SIGNALS:
     void propertyChanged(const QString &propertyName, const QVariant &value);

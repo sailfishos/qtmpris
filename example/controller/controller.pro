@@ -4,7 +4,7 @@ TEMPLATE = app
 TARGET = controller
 CONFIG += qt link_pkgconfig
 
-QT += qml quick
+QT += qml quick dbus
 
 DEPENDPATH += ../../src
 INCLUDEPATH += ../../src

@@ -22,7 +22,7 @@
 
 
 import QtQuick 2.0
-import org.nemomobile.qtmpris 1.0
+import Amber.Mpris 1.0
 
 Item {
     id: controls
@@ -39,11 +39,7 @@ Item {
         Text {
             id: artistLabel
 
-            text: if (mprisManager.currentService) {
-                var artistTag = Mpris.metadataToString(Mpris.Artist)
-
-                return (artistTag in mprisManager.metadata) ? mprisManager.metadata[artistTag].toString() : ""
-            }
+            text: mprisManager.metaData.contributingArtist || ''
             width: parent.width
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
@@ -52,11 +48,7 @@ Item {
         Text {
             id: songLabel
 
-            text: if (mprisManager.currentService) {
-                var titleTag = Mpris.metadataToString(Mpris.Title)
-
-                return (titleTag in mprisManager.metadata) ? mprisManager.metadata[titleTag].toString() : ""
-            }
+            text: mprisManager.metaData.title || ''
             width: parent.width
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
@@ -81,9 +73,7 @@ Item {
                 width: controls.parent.width * 0.25
                 height: width
 
-                onClicked: if ((controls.isPlaying && mprisManager.canPause) || (!controls.isPlaying && mprisManager.canPlay)) {
-                    mprisManager.playPause()
-                }
+                onClicked: if (mprisManager.canPlay || mprisManager.canPause) mprisManager.playPause()
 
                 Text {
                     anchors.centerIn: parent
@@ -95,7 +85,7 @@ Item {
                 width: controls.parent.width * 0.25
                 height: width
 
-                onClicked: if (mprisManager.canGoPrevious) if (mprisManager.canGoNext) mprisManager.next()
+                onClicked: if (mprisManager.canGoNext) mprisManager.next()
 
                 Text {
                     anchors.centerIn: parent

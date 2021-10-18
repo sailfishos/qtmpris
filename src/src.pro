@@ -67,7 +67,7 @@ OTHER_FILES += \
 
 target.path = $$[QT_INSTALL_LIBS]
 headers.files = $$INSTALL_HEADERS
-headers.path = $$[QT_INSTALL_HEADERS]/MprisQt
+headers.path = /usr/include/AmberMpris
 prf.files = $${TARGET}.prf
 prf.path = $$[QMAKE_MKSPECS]/features
 INSTALLS += target headers prf

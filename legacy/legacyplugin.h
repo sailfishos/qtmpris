@@ -1,9 +1,8 @@
+// -*- c++ -*-
+
 /*!
  *
- * Copyright (C) 2015 Jolla Ltd.
- *
- * Contact: Valerio Valerio <valerio.valerio@jolla.com>
- * Author: Andres Gomez <andres.gomez@jolla.com>
+ * Copyright (C) 2015-2021 Jolla Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,23 +20,24 @@
  */
 
 
-import QtQuick 2.0
-import Amber.Mpris 1.0
+#ifndef LEGACY_PLUGIN_H
+#define LEGACY_PLUGIN_H
 
-Item {
-    id: mainItem
+#include <QQmlExtensionPlugin>
+#include <QtGlobal>
 
-    anchors.fill: parent
 
-    Loader {
-        id: controlsLoader
+class LegacyMprisPlugin : public QQmlExtensionPlugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.nemomobile.mpris")
 
-        active: mprisManager.availableServices.length > 0
+public:
+    MprisPlugin(QObject *parent = 0);
+    ~MprisPlugin();
 
-        Component.onCompleted: setSource("MprisControls.qml", { "mprisManager": mprisManager, "parent": mainItem })
+    virtual void registerTypes(const char *uri);
+};
 
-        MprisManager {
-            id: mprisManager
-        }
-    }
-}
+
+#endif /* LEGACY_PLUGIN_H */

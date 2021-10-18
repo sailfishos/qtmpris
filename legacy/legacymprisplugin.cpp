@@ -2,10 +2,7 @@
 
 /*!
  *
- * Copyright (C) 2015 Jolla Ltd.
- *
- * Contact: Valerio Valerio <valerio.valerio@jolla.com>
- * Author: Andres Gomez <andres.gomez@jolla.com>
+ * Copyright (C) 2015-2021 Jolla Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,27 +19,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
+#include "mprisplugin.h"
+
 #include <Mpris>
+#include <MprisPlayer>
 #include <MprisManager>
+#include <MprisController>
 #include <MprisMetaData>
+#include "declarativemprisplayer_p.h"
+#include "legacympris_p.h"
+#include "legacymprismanager_p.h"
+#include "legacymprisplayer_p.h"
 
-#include <QtQuick>
+#include <qqml.h>
 
-#include <QGuiApplication>
-
-int main(int argc, char *argv[])
+template<class T> QObject *api_factory(QQmlEngine *, QJSEngine *)
 {
-    QGuiApplication *app = new QGuiApplication(argc, argv);
-    QQuickView *view = new QQuickView;
+    return new T;
+}
 
-    qmlRegisterUncreatableType<Mpris>("Amber.Mpris", 1, 0, "Mpris", QStringLiteral("Mpris is a namespace object"));
-    qmlRegisterUncreatableType<MprisMetaData>("Amber.Mpris", 1, 0, "MprisMetaData", QStringLiteral("MprisMetaData can not be instantiated"));
-    qmlRegisterType<MprisManager>("Amber.Mpris", 1, 0, "MprisManager");
+MprisPlugin::MprisPlugin(QObject *parent) :
+    QQmlExtensionPlugin(parent)
+{
+}
 
-    view->setSource(app->applicationDirPath().append("/../qml/controller.qml"));
-    view->show();
+MprisPlugin::~MprisPlugin()
+{
+}
 
-    int retVal = app->exec();
-
-    return retVal;
+void MprisPlugin::registerTypes(const char *uri)
+{
+    qmlRegisterSingletonType<LegacyMpris>(uri, 1, 0, "Mpris", api_factory<LegacyMpris>);
+    qmlRegisterType<LegacyMprisPlayer>(uri, 1, 0, "MprisPlayer");
+    qmlRegisterType<LegacyMprisManager>(uri, 1, 0, "MprisPlayer");
 }

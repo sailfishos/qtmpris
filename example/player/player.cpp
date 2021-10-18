@@ -25,23 +25,20 @@
 
 #include <Mpris>
 #include <MprisPlayer>
+#include <MprisMetaData>
 
 #include <QtQuick>
 
 #include <QGuiApplication>
-
-static QObject * api_factory(QQmlEngine *, QJSEngine *)
-{
-    return new Mpris;
-}
 
 int main(int argc, char *argv[])
 {
     QGuiApplication *app = new QGuiApplication(argc, argv);
     QQuickView *view = new QQuickView;
 
-    qmlRegisterSingletonType<Mpris>("org.nemomobile.qtmpris", 1, 0, "Mpris", api_factory);
-    qmlRegisterType<MprisPlayer>("org.nemomobile.qtmpris", 1, 0, "MprisPlayer");
+    qmlRegisterUncreatableType<Mpris>("Amber.Mpris", 1, 0, "Mpris", QStringLiteral("Mpris is a namespace object"));
+    qmlRegisterUncreatableType<MprisMetaData>("Amber.Mpris", 1, 0, "MprisMetaData", QStringLiteral("MprisMetaData can not be instantiated"));
+    qmlRegisterType<MprisPlayer>("Amber.Mpris", 1, 0, "MprisPlayer");
 
     view->setSource(app->applicationDirPath().append("/../qml/player.qml"));
     view->show();

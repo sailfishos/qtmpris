@@ -36,6 +36,11 @@ MprisPlayerPrivate::MprisPlayerPrivate(MprisPlayer *parent)
     , m_connection(getDBusConnection())
     , m_serviceAdaptor(this)
     , m_playerAdaptor(this)
+    , m_canQuit(false)
+    , m_canRaise(false)
+    , m_canSetFullscreen(false)
+    , m_fullscreen(false)
+    , m_hasTrackList(false)
     , m_metaData(this)
     , m_canControl(false)
     , m_canGoNext(false)
@@ -89,7 +94,7 @@ void MprisPlayerPrivate::setLoopStatus(const QString &value)
         return;
     }
 
-    Q_EMIT parent()->loopStatusRequested(static_cast<Mpris::LoopStatus>(enumVal));
+    Q_EMIT parent()->loopStatusRequested(enumVal);
 }
 
 QString MprisPlayerPrivate::loopStatus() const

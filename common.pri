@@ -1,1 +1,1 @@
-MPRISQTLIB = mpris-qt5
+MPRISQTLIB = ambermpris

@@ -85,7 +85,7 @@ public:
     inline bool fullscreen()
     { return qvariant_cast< bool >(internalPropGet("Fullscreen", &m_fullscreen)); }
     inline void setFullscreen(bool value)
-    { m_fullscreen = value; internalPropSet("Fullscreen", QVariant::fromValue(value), &m_fullscreen); }
+    { internalPropSet("Fullscreen", QVariant::fromValue(value), &m_fullscreen); }
 
     Q_PROPERTY(bool HasTrackList READ hasTrackList NOTIFY hasTrackListChanged)
     inline bool hasTrackList()
@@ -192,7 +192,7 @@ public:
     inline QString loopStatus()
     { return qvariant_cast< QString >(internalPropGet("LoopStatus", &m_loopStatus)); }
     inline void setLoopStatus(const QString &value)
-    { m_loopStatus = value; internalPropSet("LoopStatus", QVariant::fromValue(value), &m_loopStatus); }
+    { internalPropSet("LoopStatus", QVariant::fromValue(value), &m_loopStatus); }
 
     Q_PROPERTY(double MaximumRate READ maximumRate NOTIFY maximumRateChanged)
     inline double maximumRate()
@@ -218,19 +218,19 @@ public:
     inline double rate()
     { return qvariant_cast< double >(internalPropGet("Rate", &m_rate)); }
     inline void setRate(double value)
-    { m_rate = value; internalPropSet("Rate", QVariant::fromValue(value), &m_rate); }
+    { internalPropSet("Rate", QVariant::fromValue(value), &m_rate); }
 
     Q_PROPERTY(bool Shuffle READ shuffle WRITE setShuffle NOTIFY shuffleChanged)
     inline bool shuffle()
     { return qvariant_cast< bool >(internalPropGet("Shuffle", &m_shuffle)); }
     inline void setShuffle(bool value)
-    { m_shuffle = value; internalPropSet("Shuffle", QVariant::fromValue(value), &m_shuffle); }
+    { internalPropSet("Shuffle", QVariant::fromValue(value), &m_shuffle); }
 
     Q_PROPERTY(double Volume READ volume WRITE setVolume NOTIFY volumeChanged)
     inline double volume()
     { return qvariant_cast< double >(internalPropGet("Volume", &m_volume)); }
     inline void setVolume(double value)
-    { m_volume = value; internalPropSet("Volume", QVariant::fromValue(value), &m_volume); }
+    { internalPropSet("Volume", QVariant::fromValue(value), &m_volume); }
 
 public Q_SLOTS: // METHODS
     inline QDBusPendingReply<> Next()

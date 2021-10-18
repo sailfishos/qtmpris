@@ -22,11 +22,12 @@ MprisPlayer {
     }
 
     canControl: true
-    canPlay: true
 
     canGoNext: playlist && playlist.currentIndex < playlist.itemCount - 1 || loopStatus != Mpris.None
     canGoPrevious: playlist && playlist.currentIndex > 0 || loopStatus != Mpris.None
-    canPause: true
+
+    canPlay: player.playbackState != Mpris.Playing && (player.source || playlist.itemCount)
+    canPause: player.playbackState == Mpris.Playing
 
     canSeek: player.seekable
     metaData.fillFrom: player.metaData

@@ -194,6 +194,9 @@ Q_SIGNALS:
     void seeked(qlonglong position);
 
 private:
+    virtual void connectNotify(const QMetaMethod &method);
+    virtual void disconnectNotify(const QMetaMethod &method);
+
     MprisControllerPrivate *priv;
 };
 

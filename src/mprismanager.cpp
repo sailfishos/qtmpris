@@ -25,6 +25,8 @@
 #include "mpriscontroller.h"
 #include "mprisqt_p.h"
 
+#include <QMetaMethod>
+#include <QTimer>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 
@@ -66,6 +68,7 @@ public:
     MprisMetaData m_dummyMetaData;
     QList< QSharedPointer<MprisController> > m_availableControllers;
     QList< QSharedPointer<MprisController> > m_otherPlayingControllers;
+    unsigned m_positionConnected;
 };
 
 MprisManagerPrivate::MprisManagerPrivate(MprisManager *parent)
@@ -73,6 +76,7 @@ MprisManagerPrivate::MprisManagerPrivate(MprisManager *parent)
     , m_singleService(false)
     , m_connection(getDBusConnection())
     , m_dummyMetaData(this)
+    , m_positionConnected(0)
 {
     if (!m_connection.isConnected()) {
         qWarning() << "Mpris: Failed attempting to connect to DBus";
@@ -83,14 +87,16 @@ MprisManagerPrivate::MprisManagerPrivate(MprisManager *parent)
                          QStringList(), QString(),
                          this, SLOT(onNameOwnerChanged(QString, QString, QString)));
 
-    QStringList serviceNames = m_connection.interface()->registeredServiceNames();
-    for (auto i = serviceNames.constBegin();
-         i != serviceNames.constEnd();
-         ++i) {
-        if (i->startsWith(mprisNameSpace)) {
-            onServiceAppeared(*i);
+    QTimer::singleShot(0, [this]() {
+        QStringList serviceNames = m_connection.interface()->registeredServiceNames();
+        for (auto i = serviceNames.constBegin();
+             i != serviceNames.constEnd();
+             ++i) {
+            if (i->startsWith(mprisNameSpace)) {
+                onServiceAppeared(*i);
+            }
         }
-    }
+    });
 }
 
 MprisManagerPrivate::~MprisManagerPrivate()
@@ -235,27 +241,27 @@ QStringList MprisManager::availableServices() const
 // Mpris2 Root Interface
 bool MprisManager::canQuit() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->canQuit();
+    return priv->m_currentController && priv->m_currentController->canQuit();
 }
 
 bool MprisManager::canRaise() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->canRaise();
+    return priv->m_currentController && priv->m_currentController->canRaise();
 }
 
 bool MprisManager::canSetFullscreen() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->canSetFullscreen();
+    return priv->m_currentController && priv->m_currentController->canSetFullscreen();
 }
 
 QString MprisManager::desktopEntry() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->desktopEntry() : QString();
+    return priv->m_currentController ? priv->m_currentController->desktopEntry() : QString();
 }
 
 bool MprisManager::fullscreen() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->fullscreen();
+    return priv->m_currentController && priv->m_currentController->fullscreen();
 }
 
 void MprisManager::setFullscreen(bool fullscreen)
@@ -267,22 +273,22 @@ void MprisManager::setFullscreen(bool fullscreen)
 
 bool MprisManager::hasTrackList() const
 {
-    return priv->checkController(Q_FUNC_INFO) && priv->m_currentController->hasTrackList();
+    return priv->m_currentController && priv->m_currentController->hasTrackList();
 }
 
 QString MprisManager::identity() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->identity() : QString();
+    return priv->m_currentController ? priv->m_currentController->identity() : QString();
 }
 
 QStringList MprisManager::supportedUriSchemes() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->supportedUriSchemes() : QStringList();
+    return priv->m_currentController ? priv->m_currentController->supportedUriSchemes() : QStringList();
 }
 
 QStringList MprisManager::supportedMimeTypes() const
 {
-    return priv->checkController(Q_FUNC_INFO) ? priv->m_currentController->supportedMimeTypes() : QStringList();
+    return priv->m_currentController ? priv->m_currentController->supportedMimeTypes() : QStringList();
 }
 
 // Mpris2 Player Interface
@@ -333,7 +339,7 @@ double MprisManager::maximumRate() const
     return priv->m_currentController ? priv->m_currentController->maximumRate() : 1;
 }
 
-const MprisMetaData *MprisManager::metaData() const
+MprisMetaData *MprisManager::metaData() const
 {
     return priv->m_currentController ? priv->m_currentController->metaData() : &priv->m_dummyMetaData;
 }
@@ -396,6 +402,23 @@ void MprisManager::setVolume(double volume)
     }
 }
 
+void MprisManager::connectNotify(const QMetaMethod &method)
+{
+    if (method == QMetaMethod::fromSignal(&MprisManager::positionChanged)) {
+        if (!priv->m_positionConnected++ && priv->m_currentController) {
+            connect(priv->m_currentController.data(), &MprisController::positionChanged, this, &MprisManager::positionChanged);
+        }
+    }
+}
+
+void MprisManager::disconnectNotify(const QMetaMethod &method)
+{
+    if (method == QMetaMethod::fromSignal(&MprisManager::positionChanged)) {
+        if (!--priv->m_positionConnected && priv->m_currentController) {
+            disconnect(priv->m_currentController.data(), &MprisController::positionChanged, this, &MprisManager::positionChanged);
+        }
+    }
+}
 
 // Private
 
@@ -699,7 +722,9 @@ void MprisManagerPrivate::setCurrentController(QSharedPointer<MprisController> c
         connect(m_currentController.data(), &MprisController::maximumRateChanged, parent(), &MprisManager::maximumRateChanged);
         connect(m_currentController.data(), &MprisController::minimumRateChanged, parent(), &MprisManager::minimumRateChanged);
         connect(m_currentController.data(), &MprisController::playbackStatusChanged, parent(), &MprisManager::playbackStatusChanged);
-        connect(m_currentController.data(), &MprisController::positionChanged, parent(), &MprisManager::positionChanged);
+        if (m_positionConnected) {
+            connect(m_currentController.data(), &MprisController::positionChanged, parent(), &MprisManager::positionChanged);
+        }
         connect(m_currentController.data(), &MprisController::rateChanged, parent(), &MprisManager::rateChanged);
         connect(m_currentController.data(), &MprisController::shuffleChanged, parent(), &MprisManager::shuffleChanged);
         connect(m_currentController.data(), &MprisController::volumeChanged, parent(), &MprisManager::volumeChanged);

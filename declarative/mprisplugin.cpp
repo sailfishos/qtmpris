@@ -28,9 +28,6 @@
 #include <MprisController>
 #include <MprisMetaData>
 #include "declarativemprisplayer_p.h"
-#include "legacympris_p.h"
-#include "legacymprismanager_p.h"
-#include "legacymprisplayer_p.h"
 
 #include <qqml.h>
 
@@ -50,13 +47,9 @@ MprisPlugin::~MprisPlugin()
 
 void MprisPlugin::registerTypes(const char *uri)
 {
-    qmlRegisterUncreatableType<Mpris>(uri, 2, 0, "Mpris", QStringLiteral("Mpris is a namespace object"));
-    qmlRegisterType<DeclarativeMprisPlayer>(uri, 2, 0, "MprisPlayer");
-    qmlRegisterType<MprisManager>(uri, 2, 0, "MprisManager");
-    qmlRegisterUncreatableType<MprisMetaData>(uri, 2, 0, "MprisMetaData", QStringLiteral("MprisMetaData can't be instantiated, use MprisPlayer or MprisManager"));
-    qmlRegisterUncreatableType<MprisController>(uri, 2, 0, "MprisController", QStringLiteral("MprisController can't be instantiated, use MprisManager"));
-
-    qmlRegisterSingletonType<LegacyMpris>(uri, 1, 0, "Mpris", api_factory<LegacyMpris>);
-    qmlRegisterType<LegacyMprisPlayer>(uri, 1, 0, "MprisPlayer");
-    qmlRegisterType<LegacyMprisManager>(uri, 1, 0, "MprisPlayer");
+    qmlRegisterUncreatableType<Mpris>(uri, 1, 0, "Mpris", QStringLiteral("Mpris is a namespace object"));
+    qmlRegisterType<DeclarativeMprisPlayer>(uri, 1, 0, "MprisPlayer");
+    qmlRegisterType<MprisManager>(uri, 1, 0, "MprisManager");
+    qmlRegisterUncreatableType<MprisMetaData>(uri, 1, 0, "MprisMetaData", QStringLiteral("MprisMetaData can't be instantiated, use MprisPlayer or MprisManager"));
+    qmlRegisterUncreatableType<MprisController>(uri, 1, 0, "MprisController", QStringLiteral("MprisController can't be instantiated, use MprisManager"));
 }
