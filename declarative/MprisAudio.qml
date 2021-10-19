@@ -35,16 +35,21 @@ MprisPlayer {
     metaData.trackId: playlist && playlist.currentIndex >= 0 ? playlist.currentIndex : null
 
     loopStatus: {
-        if (!playlist)
+        if (!playlist) {
             return Mpris.None
-        if (playlist.playbackMode == Playlist.Random)
+        } else if (playlist.playbackMode == Playlist.Random) {
             return Mpris.Playlist
+        }
+
         _oldLoopStatus = playlist.playbackMode
-        if (playlist.playbackMode == Playlist.CurrentItemInLoop)
+
+        if (playlist.playbackMode == Playlist.CurrentItemInLoop) {
             return Mpris.Track
-        if (playlist.playbackMode == Playlist.Loop)
+        } else if (playlist.playbackMode == Playlist.Loop) {
             return Mpris.Playlist
-        return Mpris.None
+        } else {
+            return Mpris.None
+        }
     }
 
     shuffle: playlist ? playlist.playbackMode == Playlist.Random : false
@@ -58,14 +63,16 @@ MprisPlayer {
     onPreviousRequested: if (playlist) { playlist.previous() }
     onShuffleRequested: if (playlist) { playlist.playbackMode = (shuffle ? Playlist.Random : _oldLoopStatus) }
     onLoopStatusRequested: {
-        if (!playlist)
+        if (!playlist) {
             return
-        if (loopStatus == Mpris.Track)
+        }
+        if (loopStatus == Mpris.Track) {
             playlist.playbackMode = Playlist.CurrentItemInLoop
-        else if (loopStatus == Mpris.Playlist)
+        } else if (loopStatus == Mpris.Playlist) {
             playlist.playbackMode = Playlist.Loop
-        else
+        } else {
             playlist.playbackMode = Playlist.Sequential
+        }
     }
 
     onSetPositionRequested: {
@@ -82,14 +89,16 @@ MprisPlayer {
             playlist.next()
         } else {
             player.seek(player.position + offset)
-            if (!seekDetection)
+            if (!seekDetection) {
                 seeked(player.position)
+            }
         }
     }
 
     onPlaybackStatusChanged: {
-        if (!seekDetection)
+        if (!seekDetection) {
             return;
+        }
 
         _oldPosition = player.position
         _oldStamp = Date.now()
@@ -98,8 +107,9 @@ MprisPlayer {
     property Connections _connections: Connections {
         target: player
         onPositionChanged: {
-            if (!seekDetection)
+            if (!seekDetection) {
                 return;
+            }
             var stamp = Date.now();
             if ((playbackStatus != Mpris.Playing && position != _oldPosition)
                 || (_oldStamp
@@ -112,8 +122,9 @@ MprisPlayer {
         }
 
         onSourceChanged: {
-            if (!seekDetection)
+            if (!seekDetection) {
                 return;
+            }
             _oldPosition = player.position
             _oldStamp = Date.now()
         }
