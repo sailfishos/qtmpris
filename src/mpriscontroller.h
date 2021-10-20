@@ -48,6 +48,7 @@ class MPRIS_QT_EXPORT MprisController : public QObject
     Q_PROPERTY(QString service READ service)
 
     Q_PROPERTY(int positionInterval READ positionInterval WRITE setPositionInterval NOTIFY positionIntervalChanged)
+    Q_PROPERTY(bool isValid READ isValid NOTIFY isValidChanged)
 
     // Mpris2 Root Interface
     Q_PROPERTY(bool canQuit READ canQuit NOTIFY canQuitChanged)
@@ -69,10 +70,10 @@ class MPRIS_QT_EXPORT MprisController : public QObject
     Q_PROPERTY(bool canSeek READ canSeek NOTIFY canSeekChanged)
     Q_PROPERTY(Mpris::LoopStatus loopStatus READ loopStatus WRITE setLoopStatus NOTIFY loopStatusChanged)
     Q_PROPERTY(double maximumRate READ maximumRate NOTIFY maximumRateChanged)
-    Q_PROPERTY(MprisMetaData *metaData READ metaData)
+    Q_PROPERTY(MprisMetaData *metaData READ metaData NOTIFY metaDataChanged)
     Q_PROPERTY(double minimumRate READ minimumRate NOTIFY minimumRateChanged)
     Q_PROPERTY(Mpris::PlaybackStatus playbackStatus READ playbackStatus NOTIFY playbackStatusChanged)
-    Q_PROPERTY(qlonglong position READ position)
+    Q_PROPERTY(qlonglong position READ position NOTIFY positionChanged)
     Q_PROPERTY(double rate READ rate WRITE setRate NOTIFY rateChanged)
     Q_PROPERTY(bool shuffle READ shuffle WRITE setShuffle NOTIFY shuffleChanged)
     Q_PROPERTY(double volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -88,20 +89,20 @@ public:
     void setPositionInterval(int interval);
 
     // Mpris2 Root Interface
-    bool quit();
-    bool raise();
+    Q_INVOKABLE bool quit();
+    Q_INVOKABLE bool raise();
 
     // Mpris2 Player Interface
-    bool next();
-    bool openUri(const QUrl &uri);
-    bool pause();
-    bool play();
-    bool playPause();
-    bool previous();
-    bool seek(qlonglong offset);
-    bool setPosition(qlonglong position);
-    bool setPosition(const QString &aTrackId, qlonglong position);
-    bool stop();
+    Q_INVOKABLE bool next();
+    Q_INVOKABLE bool openUri(const QUrl &uri);
+    Q_INVOKABLE bool pause();
+    Q_INVOKABLE bool play();
+    Q_INVOKABLE bool playPause();
+    Q_INVOKABLE bool previous();
+    Q_INVOKABLE bool seek(qlonglong offset);
+    Q_INVOKABLE bool setPosition(qlonglong position);
+    Q_INVOKABLE bool setPosition(const QString &aTrackId, qlonglong position);
+    Q_INVOKABLE bool stop();
 
     QString service() const;
 
@@ -164,6 +165,7 @@ public:
 Q_SIGNALS:
 
     void positionIntervalChanged();
+    void isValidChanged();
 
     // Mpris2 Root Interface
     void canQuitChanged();
@@ -185,6 +187,7 @@ Q_SIGNALS:
     void canSeekChanged();
     void loopStatusChanged();
     void maximumRateChanged();
+    void metaDataChanged();
     void minimumRateChanged();
     void playbackStatusChanged();
     void positionChanged(qlonglong position);

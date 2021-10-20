@@ -32,7 +32,6 @@
 #include <QByteArray>
 #include <QList>
 #include <QObject>
-#include <QSharedPointer>
 #include <QString>
 #include <QStringList>
 
@@ -46,6 +45,7 @@ class MPRIS_QT_EXPORT MprisManager : public QObject
     Q_PROPERTY(bool singleService READ singleService WRITE setSingleService NOTIFY singleServiceChanged)
     Q_PROPERTY(QString currentService READ currentService WRITE setCurrentService NOTIFY currentServiceChanged)
     Q_PROPERTY(QStringList availableServices READ availableServices NOTIFY availableServicesChanged)
+    Q_PROPERTY(QList<MprisController *> availableControllers READ availableControllers NOTIFY availableServicesChanged)
 
     // Mpris2 Root Interface
     Q_PROPERTY(bool canQuit READ canQuit NOTIFY canQuitChanged)
@@ -105,6 +105,7 @@ public:
     void setCurrentService(const QString &service);
 
     QStringList availableServices() const;
+    QList<MprisController *> availableControllers() const;
 
     // Mpris2 Root Interface
     bool canQuit() const;

@@ -25,6 +25,7 @@
 #include "mpriscontroller.h"
 #include "mprisqt_p.h"
 
+#include <algorithm>
 #include <QMetaMethod>
 #include <QTimer>
 #include <QDBusConnection>
@@ -55,19 +56,21 @@ public Q_SLOTS:
     void onNameOwnerChanged(const QString &service, const QString &oldOwner, const QString& newOwner);
     void onServiceAppeared(const QString &service);
     void onServiceVanished(const QString &service);
-    void onAvailableControllerPlaybackStatusChanged(QWeakPointer<MprisController> wController);
+    void onAvailableControllerPlaybackStatusChanged(MprisController *controller);
 
 public:
-    QSharedPointer<MprisController> availableController(const QString &service);
-    void setCurrentController(QSharedPointer<MprisController> controller);
+    MprisController *availableController(const QString &service) const;
+    MprisController *pendingController(const QString &service) const;
+    void setCurrentController(MprisController *controller);
     bool checkController(const char *callerName) const;
 
     bool m_singleService;
-    QSharedPointer<MprisController> m_currentController;
+    MprisController *m_currentController;
     QDBusConnection m_connection;
     MprisMetaData m_dummyMetaData;
-    QList< QSharedPointer<MprisController> > m_availableControllers;
-    QList< QSharedPointer<MprisController> > m_otherPlayingControllers;
+    QList<MprisController *> m_pendingControllers;
+    QList<MprisController *> m_availableControllers;
+    QList<MprisController *> m_otherPlayingControllers;
     unsigned m_positionConnected;
 };
 
@@ -200,12 +203,12 @@ void MprisManager::setSingleService(bool single)
 
 QString MprisManager::currentService() const
 {
-    return priv->m_currentController.isNull() ? QString() : priv->m_currentController->service();
+    return priv->m_currentController ? priv->m_currentController->service() : QString();
 }
 
 void MprisManager::setCurrentService(const QString &service)
 {
-    if (!priv->m_currentController.isNull() && priv->m_currentController->service() == service) {
+    if (priv->m_currentController && priv->m_currentController->service() == service) {
         return;
     }
 
@@ -214,11 +217,12 @@ void MprisManager::setCurrentService(const QString &service)
         return;
     }
 
-    QSharedPointer<MprisController> controller = priv->availableController(service);
-    if (controller.isNull()) {
-        controller = QSharedPointer<MprisController>(new MprisController(service, getDBusConnection(), this));
+    MprisController *controller = priv->availableController(service);
+    if (!controller) {
+        controller = new MprisController(service, getDBusConnection(), this);
     } else {
         priv->m_availableControllers.move(priv->m_availableControllers.indexOf(controller), 0);
+        Q_EMIT availableServicesChanged();
     }
 
     priv->setCurrentController(controller);
@@ -231,10 +235,21 @@ QStringList MprisManager::availableServices() const
     for (auto i = priv->m_availableControllers.constBegin();
          i != priv->m_availableControllers.constEnd();
          ++i) {
-        const QSharedPointer<MprisController> controller = *i;
-        result.append(controller->service());
+        result.append((*i)->service());
     }
 
+    return result;
+}
+
+QList<MprisController *> MprisManager::availableControllers() const
+{
+    QList<MprisController *> result;
+
+    for (auto i = priv->m_availableControllers.constBegin();
+         i != priv->m_availableControllers.constEnd();
+         ++i) {
+        result << *i;
+    }
     return result;
 }
 
@@ -406,7 +421,7 @@ void MprisManager::connectNotify(const QMetaMethod &method)
 {
     if (method == QMetaMethod::fromSignal(&MprisManager::positionChanged)) {
         if (!priv->m_positionConnected++ && priv->m_currentController) {
-            connect(priv->m_currentController.data(), &MprisController::positionChanged, this, &MprisManager::positionChanged);
+            connect(priv->m_currentController, &MprisController::positionChanged, this, &MprisManager::positionChanged);
         }
     }
 }
@@ -415,7 +430,7 @@ void MprisManager::disconnectNotify(const QMetaMethod &method)
 {
     if (method == QMetaMethod::fromSignal(&MprisManager::positionChanged)) {
         if (!--priv->m_positionConnected && priv->m_currentController) {
-            disconnect(priv->m_currentController.data(), &MprisController::positionChanged, this, &MprisManager::positionChanged);
+            disconnect(priv->m_currentController, &MprisController::positionChanged, this, &MprisManager::positionChanged);
         }
     }
 }
@@ -449,24 +464,55 @@ void MprisManagerPrivate::onNameOwnerChanged(const QString &service, const QStri
 
 void MprisManagerPrivate::onServiceAppeared(const QString &service)
 {
-    QSharedPointer<MprisController> controller = availableController(service);
-    if (!controller.isNull()) {
+    MprisController *controller = availableController(service);
+    if (controller) {
         Q_ASSERT(m_availableControllers.contains(controller));
         m_availableControllers.removeOne(controller);
         m_otherPlayingControllers.removeOne(controller);
-    } else {
-        if (!m_currentController.isNull() && service == m_currentController->service()) {
-            controller = m_currentController;
-        } else {
-            controller = QSharedPointer<MprisController>(new MprisController(service, getDBusConnection(), this));
+
+        if (controller == m_currentController) {
+            if (m_availableControllers.isEmpty()) {
+                m_currentController = 0;
+            } else {
+                m_currentController = m_availableControllers[0];
+            }
         }
 
-        QWeakPointer<MprisController> weakController(controller);
+        Q_EMIT parent()->availableServicesChanged();
+        controller->deleteLater();
+    } else {
+        controller = pendingController(service);
 
-        connect(controller.data(), &MprisController::playbackStatusChanged, this, [this, weakController] { onAvailableControllerPlaybackStatusChanged(weakController); });
+        if (controller) {
+            m_pendingControllers.removeOne(controller);
+            controller->deleteLater();
+        }
     }
 
-    if (m_currentController.isNull()) {
+    controller = new MprisController(service, getDBusConnection(), this);
+
+    if (!controller->isValid()) {
+        connect(controller, &MprisController::isValidChanged, this, [this, controller] {
+            bool emitted = false;
+            QMetaObject::Connection connection = connect(parent(), &MprisManager::availableServicesChanged, this, [&emitted] { emitted = true; }, Qt::DirectConnection);
+            m_pendingControllers.removeOne(controller);
+            m_availableControllers.prepend(controller);
+            m_otherPlayingControllers.prepend(controller);
+            connect(controller, &MprisController::playbackStatusChanged, this, [this, controller] { onAvailableControllerPlaybackStatusChanged(controller); });
+            onAvailableControllerPlaybackStatusChanged(controller);
+
+            if (!emitted) {
+                Q_EMIT parent()->availableServicesChanged();
+            }
+            parent()->disconnect(connection);
+        });
+        m_pendingControllers << controller;
+        return;
+    }
+
+    connect(controller, &MprisController::playbackStatusChanged, this, [this, controller] { onAvailableControllerPlaybackStatusChanged(controller); });
+
+    if (!m_currentController) {
         setCurrentController(controller);
     }
 
@@ -492,110 +538,143 @@ void MprisManagerPrivate::onServiceAppeared(const QString &service)
 
 void MprisManagerPrivate::onServiceVanished(const QString &service)
 {
-    QSharedPointer<MprisController> controller = availableController(service);
-    if (!controller.isNull()) {
-        Q_ASSERT(m_availableControllers.contains(controller));
-        m_availableControllers.removeOne(controller);
-        m_otherPlayingControllers.removeOne(controller);
+    MprisController *controller = pendingController(service);
+
+    if (controller) {
+        m_pendingControllers.removeOne(controller);
+        controller->deleteLater();
+
+        return;
     }
 
-    if (!m_currentController.isNull() && service == m_currentController->service()) {
+    controller = availableController(service);
+    if (controller) {
+        m_availableControllers.removeOne(controller);
+        m_otherPlayingControllers.removeOne(controller);
+        Q_EMIT parent()->availableServicesChanged();
+    }
+
+    if (m_currentController && service == m_currentController->service()) {
         if (m_singleService) {
-            Q_EMIT parent()->availableServicesChanged();
+            m_currentController = nullptr;
             return;
         }
 
         if (!m_availableControllers.isEmpty()) {
             setCurrentController(m_availableControllers[0]);
         } else {
-            setCurrentController(QSharedPointer<MprisController>());
+            setCurrentController(nullptr);
         }
     }
 
-    Q_EMIT parent()->availableServicesChanged();
+    if (controller) {
+        controller->deleteLater();
+    }
 }
 
-void MprisManagerPrivate::onAvailableControllerPlaybackStatusChanged(QWeakPointer<MprisController> wController)
+void MprisManagerPrivate::onAvailableControllerPlaybackStatusChanged(MprisController *controller)
 {
-    QSharedPointer<MprisController> controller = wController.lock();
-    Q_ASSERT(!controller.isNull());
-
     if (m_currentController == controller) {
         if (m_currentController->playbackStatus() == Mpris::Playing) {
+            if (m_availableControllers[0] != m_currentController) {
+                m_availableControllers.move(m_availableControllers.indexOf(m_currentController), 0);
+                Q_EMIT parent()->availableServicesChanged();
+            }
             return;
         }
 
         if (!m_otherPlayingControllers.isEmpty()) {
-            QSharedPointer<MprisController> currentController = m_otherPlayingControllers.takeFirst();
+            m_availableControllers.move(m_availableControllers.indexOf(m_currentController), m_otherPlayingControllers.length());
+            MprisController *currentController = m_otherPlayingControllers.takeFirst();
             m_availableControllers.move(m_availableControllers.indexOf(currentController), 0);
-            setCurrentController(currentController);
+            Q_EMIT parent()->availableServicesChanged();
+
+            if (!m_singleService) {
+                setCurrentController(currentController);
+            }
         }
     } else {
         if (controller->playbackStatus() != Mpris::Playing) {
-            m_otherPlayingControllers.removeOne(controller);
+            if (m_otherPlayingControllers.removeOne(controller)) {
+                m_availableControllers.move(m_availableControllers.indexOf(controller), m_otherPlayingControllers.length());
+                Q_EMIT parent()->availableServicesChanged();
+            }
             return;
         }
 
-        if (!m_singleService
+        m_availableControllers.move(m_availableControllers.indexOf(controller), 0);
+        Q_EMIT parent()->availableServicesChanged();
+
+        if (!m_singleService && m_currentController
             && m_currentController->playbackStatus() != Mpris::Playing) {
             setCurrentController(controller);
         } else {
-            m_availableControllers.move(m_availableControllers.indexOf(controller), 1);
             m_otherPlayingControllers.removeOne(controller); // Just in case, shouldn't be needed
             m_otherPlayingControllers.prepend(controller);
         }
     }
 }
 
-QSharedPointer<MprisController> MprisManagerPrivate::availableController(const QString &service)
+MprisController *MprisManagerPrivate::pendingController(const QString &service) const
 {
-    QList< QSharedPointer<MprisController> >::iterator i = m_availableControllers.begin();
-    while (i != m_availableControllers.end()) {
-        QSharedPointer<MprisController> controller = *i;
-        if (!controller.isNull() && controller->service() == service) {
-            return controller;
-        }
+    auto result = std::find_if(m_pendingControllers.cbegin(),
+                               m_pendingControllers.cend(),
+                               [service](MprisController *c) { return c->service() == service; });
 
-        ++i;
+    if (result != m_pendingControllers.cend()) {
+        return *result;
     }
 
-    return QSharedPointer<MprisController>();
+    return nullptr;
 }
 
-void MprisManagerPrivate::setCurrentController(QSharedPointer<MprisController> controller)
+MprisController *MprisManagerPrivate::availableController(const QString &service) const
+{
+    auto result = std::find_if(m_availableControllers.cbegin(),
+                               m_availableControllers.cend(),
+                               [service](MprisController *c) { return c->service() == service; });
+
+    if (result != m_availableControllers.cend()) {
+        return *result;
+    }
+
+    return nullptr;
+}
+
+void MprisManagerPrivate::setCurrentController(MprisController *controller)
 {
     if (controller == m_currentController) {
         return;
     }
 
-    if (!m_currentController.isNull()) {
+    if (m_currentController) {
         // Mpris Root Interface
-        disconnect(m_currentController.data(), &MprisController::canQuitChanged, parent(), &MprisManager::canQuitChanged);
-        disconnect(m_currentController.data(), &MprisController::canRaiseChanged, parent(), &MprisManager::canRaiseChanged);
-        disconnect(m_currentController.data(), &MprisController::canSetFullscreenChanged, parent(), &MprisManager::canSetFullscreenChanged);
-        disconnect(m_currentController.data(), &MprisController::desktopEntryChanged, parent(), &MprisManager::desktopEntryChanged);
-        disconnect(m_currentController.data(), &MprisController::fullscreenChanged, parent(), &MprisManager::fullscreenChanged);
-        disconnect(m_currentController.data(), &MprisController::hasTrackListChanged, parent(), &MprisManager::hasTrackListChanged);
-        disconnect(m_currentController.data(), &MprisController::identityChanged, parent(), &MprisManager::identityChanged);
-        disconnect(m_currentController.data(), &MprisController::supportedUriSchemesChanged, parent(), &MprisManager::supportedUriSchemesChanged);
-        disconnect(m_currentController.data(), &MprisController::supportedMimeTypesChanged, parent(), &MprisManager::supportedMimeTypesChanged);
+        disconnect(m_currentController, &MprisController::canQuitChanged, parent(), &MprisManager::canQuitChanged);
+        disconnect(m_currentController, &MprisController::canRaiseChanged, parent(), &MprisManager::canRaiseChanged);
+        disconnect(m_currentController, &MprisController::canSetFullscreenChanged, parent(), &MprisManager::canSetFullscreenChanged);
+        disconnect(m_currentController, &MprisController::desktopEntryChanged, parent(), &MprisManager::desktopEntryChanged);
+        disconnect(m_currentController, &MprisController::fullscreenChanged, parent(), &MprisManager::fullscreenChanged);
+        disconnect(m_currentController, &MprisController::hasTrackListChanged, parent(), &MprisManager::hasTrackListChanged);
+        disconnect(m_currentController, &MprisController::identityChanged, parent(), &MprisManager::identityChanged);
+        disconnect(m_currentController, &MprisController::supportedUriSchemesChanged, parent(), &MprisManager::supportedUriSchemesChanged);
+        disconnect(m_currentController, &MprisController::supportedMimeTypesChanged, parent(), &MprisManager::supportedMimeTypesChanged);
 
         // Mpris Player Interface
-        disconnect(m_currentController.data(), &MprisController::canControlChanged, parent(), &MprisManager::canControlChanged);
-        disconnect(m_currentController.data(), &MprisController::canGoNextChanged, parent(), &MprisManager::canGoNextChanged);
-        disconnect(m_currentController.data(), &MprisController::canGoPreviousChanged, parent(), &MprisManager::canGoPreviousChanged);
-        disconnect(m_currentController.data(), &MprisController::canPauseChanged, parent(), &MprisManager::canPauseChanged);
-        disconnect(m_currentController.data(), &MprisController::canPlayChanged, parent(), &MprisManager::canPlayChanged);
-        disconnect(m_currentController.data(), &MprisController::canSeekChanged, parent(), &MprisManager::canSeekChanged);
-        disconnect(m_currentController.data(), &MprisController::loopStatusChanged, parent(), &MprisManager::loopStatusChanged);
-        disconnect(m_currentController.data(), &MprisController::maximumRateChanged, parent(), &MprisManager::maximumRateChanged);
-        disconnect(m_currentController.data(), &MprisController::minimumRateChanged, parent(), &MprisManager::minimumRateChanged);
-        disconnect(m_currentController.data(), &MprisController::playbackStatusChanged, parent(), &MprisManager::playbackStatusChanged);
-        disconnect(m_currentController.data(), &MprisController::positionChanged, parent(), &MprisManager::positionChanged);
-        disconnect(m_currentController.data(), &MprisController::rateChanged, parent(), &MprisManager::rateChanged);
-        disconnect(m_currentController.data(), &MprisController::shuffleChanged, parent(), &MprisManager::shuffleChanged);
-        disconnect(m_currentController.data(), &MprisController::volumeChanged, parent(), &MprisManager::volumeChanged);
-        disconnect(m_currentController.data(), &MprisController::seeked, parent(), &MprisManager::seeked);
+        disconnect(m_currentController, &MprisController::canControlChanged, parent(), &MprisManager::canControlChanged);
+        disconnect(m_currentController, &MprisController::canGoNextChanged, parent(), &MprisManager::canGoNextChanged);
+        disconnect(m_currentController, &MprisController::canGoPreviousChanged, parent(), &MprisManager::canGoPreviousChanged);
+        disconnect(m_currentController, &MprisController::canPauseChanged, parent(), &MprisManager::canPauseChanged);
+        disconnect(m_currentController, &MprisController::canPlayChanged, parent(), &MprisManager::canPlayChanged);
+        disconnect(m_currentController, &MprisController::canSeekChanged, parent(), &MprisManager::canSeekChanged);
+        disconnect(m_currentController, &MprisController::loopStatusChanged, parent(), &MprisManager::loopStatusChanged);
+        disconnect(m_currentController, &MprisController::maximumRateChanged, parent(), &MprisManager::maximumRateChanged);
+        disconnect(m_currentController, &MprisController::minimumRateChanged, parent(), &MprisManager::minimumRateChanged);
+        disconnect(m_currentController, &MprisController::playbackStatusChanged, parent(), &MprisManager::playbackStatusChanged);
+        disconnect(m_currentController, &MprisController::positionChanged, parent(), &MprisManager::positionChanged);
+        disconnect(m_currentController, &MprisController::rateChanged, parent(), &MprisManager::rateChanged);
+        disconnect(m_currentController, &MprisController::shuffleChanged, parent(), &MprisManager::shuffleChanged);
+        disconnect(m_currentController, &MprisController::volumeChanged, parent(), &MprisManager::volumeChanged);
+        disconnect(m_currentController, &MprisController::seeked, parent(), &MprisManager::seeked);
 
         if (m_currentController->playbackStatus() == Mpris::Playing) {
             m_otherPlayingControllers.prepend(m_currentController);
@@ -699,36 +778,36 @@ void MprisManagerPrivate::setCurrentController(QSharedPointer<MprisController> c
         Q_EMIT parent()->volumeChanged();
     }
 
-    if (!m_currentController.isNull()) {
+    if (m_currentController) {
         // Mpris Root Interface
-        connect(m_currentController.data(), &MprisController::canQuitChanged, parent(), &MprisManager::canQuitChanged);
-        connect(m_currentController.data(), &MprisController::canRaiseChanged, parent(), &MprisManager::canRaiseChanged);
-        connect(m_currentController.data(), &MprisController::canSetFullscreenChanged, parent(), &MprisManager::canSetFullscreenChanged);
-        connect(m_currentController.data(), &MprisController::desktopEntryChanged, parent(), &MprisManager::desktopEntryChanged);
-        connect(m_currentController.data(), &MprisController::fullscreenChanged, parent(), &MprisManager::fullscreenChanged);
-        connect(m_currentController.data(), &MprisController::hasTrackListChanged, parent(), &MprisManager::hasTrackListChanged);
-        connect(m_currentController.data(), &MprisController::identityChanged, parent(), &MprisManager::identityChanged);
-        connect(m_currentController.data(), &MprisController::supportedUriSchemesChanged, parent(), &MprisManager::supportedUriSchemesChanged);
-        connect(m_currentController.data(), &MprisController::supportedMimeTypesChanged, parent(), &MprisManager::supportedMimeTypesChanged);
-        connect(m_currentController.data(), &MprisController::canControlChanged, parent(), &MprisManager::canControlChanged);
+        connect(m_currentController, &MprisController::canQuitChanged, parent(), &MprisManager::canQuitChanged);
+        connect(m_currentController, &MprisController::canRaiseChanged, parent(), &MprisManager::canRaiseChanged);
+        connect(m_currentController, &MprisController::canSetFullscreenChanged, parent(), &MprisManager::canSetFullscreenChanged);
+        connect(m_currentController, &MprisController::desktopEntryChanged, parent(), &MprisManager::desktopEntryChanged);
+        connect(m_currentController, &MprisController::fullscreenChanged, parent(), &MprisManager::fullscreenChanged);
+        connect(m_currentController, &MprisController::hasTrackListChanged, parent(), &MprisManager::hasTrackListChanged);
+        connect(m_currentController, &MprisController::identityChanged, parent(), &MprisManager::identityChanged);
+        connect(m_currentController, &MprisController::supportedUriSchemesChanged, parent(), &MprisManager::supportedUriSchemesChanged);
+        connect(m_currentController, &MprisController::supportedMimeTypesChanged, parent(), &MprisManager::supportedMimeTypesChanged);
+        connect(m_currentController, &MprisController::canControlChanged, parent(), &MprisManager::canControlChanged);
 
         // Mpris Player Interface
-        connect(m_currentController.data(), &MprisController::canGoNextChanged, parent(), &MprisManager::canGoNextChanged);
-        connect(m_currentController.data(), &MprisController::canGoPreviousChanged, parent(), &MprisManager::canGoPreviousChanged);
-        connect(m_currentController.data(), &MprisController::canPauseChanged, parent(), &MprisManager::canPauseChanged);
-        connect(m_currentController.data(), &MprisController::canPlayChanged, parent(), &MprisManager::canPlayChanged);
-        connect(m_currentController.data(), &MprisController::canSeekChanged, parent(), &MprisManager::canSeekChanged);
-        connect(m_currentController.data(), &MprisController::loopStatusChanged, parent(), &MprisManager::loopStatusChanged);
-        connect(m_currentController.data(), &MprisController::maximumRateChanged, parent(), &MprisManager::maximumRateChanged);
-        connect(m_currentController.data(), &MprisController::minimumRateChanged, parent(), &MprisManager::minimumRateChanged);
-        connect(m_currentController.data(), &MprisController::playbackStatusChanged, parent(), &MprisManager::playbackStatusChanged);
+        connect(m_currentController, &MprisController::canGoNextChanged, parent(), &MprisManager::canGoNextChanged);
+        connect(m_currentController, &MprisController::canGoPreviousChanged, parent(), &MprisManager::canGoPreviousChanged);
+        connect(m_currentController, &MprisController::canPauseChanged, parent(), &MprisManager::canPauseChanged);
+        connect(m_currentController, &MprisController::canPlayChanged, parent(), &MprisManager::canPlayChanged);
+        connect(m_currentController, &MprisController::canSeekChanged, parent(), &MprisManager::canSeekChanged);
+        connect(m_currentController, &MprisController::loopStatusChanged, parent(), &MprisManager::loopStatusChanged);
+        connect(m_currentController, &MprisController::maximumRateChanged, parent(), &MprisManager::maximumRateChanged);
+        connect(m_currentController, &MprisController::minimumRateChanged, parent(), &MprisManager::minimumRateChanged);
+        connect(m_currentController, &MprisController::playbackStatusChanged, parent(), &MprisManager::playbackStatusChanged);
         if (m_positionConnected) {
-            connect(m_currentController.data(), &MprisController::positionChanged, parent(), &MprisManager::positionChanged);
+            connect(m_currentController, &MprisController::positionChanged, parent(), &MprisManager::positionChanged);
         }
-        connect(m_currentController.data(), &MprisController::rateChanged, parent(), &MprisManager::rateChanged);
-        connect(m_currentController.data(), &MprisController::shuffleChanged, parent(), &MprisManager::shuffleChanged);
-        connect(m_currentController.data(), &MprisController::volumeChanged, parent(), &MprisManager::volumeChanged);
-        connect(m_currentController.data(), &MprisController::seeked, parent(), &MprisManager::seeked);
+        connect(m_currentController, &MprisController::rateChanged, parent(), &MprisManager::rateChanged);
+        connect(m_currentController, &MprisController::shuffleChanged, parent(), &MprisManager::shuffleChanged);
+        connect(m_currentController, &MprisController::volumeChanged, parent(), &MprisManager::volumeChanged);
+        connect(m_currentController, &MprisController::seeked, parent(), &MprisManager::seeked);
 
         if (m_currentController->playbackStatus() == Mpris::Playing) {
             m_otherPlayingControllers.removeOne(m_currentController);
@@ -742,7 +821,7 @@ void MprisManagerPrivate::setCurrentController(QSharedPointer<MprisController> c
 
 bool MprisManagerPrivate::checkController(const char *callerName) const
 {
-    if (m_currentController.isNull()) {
+    if (!m_currentController) {
         qWarning() << callerName << "None service available/selected";
         return false;
     }

@@ -83,7 +83,7 @@ void MprisRootInterface::onPropertyChanged(const QString &propertyName, const QV
             Q_EMIT hasTrackListChanged(m_hasTrackList);
         }
     } else if (propertyName == QStringLiteral("Identity")) {
-        QString identity= value.toString();
+        QString identity = value.toString();
         if (m_identity != identity) {
             m_identity = identity;
             Q_EMIT identityChanged(m_identity);

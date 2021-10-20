@@ -1,1 +1,2 @@
 MPRISQTLIB = ambermpris
+CONFIG += debug

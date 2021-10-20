@@ -306,7 +306,7 @@ Q_SIGNALS: // SIGNALS
     void rateChanged(double rate);
     void shuffleChanged(bool shuffle);
     void volumeChanged(double volume);
-    void seeked(qlonglong Position);
+    void Seeked(qlonglong Position);
 
 private Q_SLOTS:
     void onPropertyChanged(const QString &propertyName, const QVariant &value);
