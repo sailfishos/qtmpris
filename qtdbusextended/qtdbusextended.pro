@@ -3,7 +3,7 @@ CONFIG += qt staticlib
 
 QT = core dbus
 
-TARGET = dbusextended-qt5
+TARGET = dbusextended-qt$${QT_MAJOR_VERSION}
 
 DEFINES += QT_DBUS_EXTENDED_LIBRARY
 

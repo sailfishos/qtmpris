@@ -42,10 +42,18 @@ MprisPlayerInterface::MprisPlayerInterface(const QString &service, const QString
     , m_canPause(false)
     , m_canPlay(false)
     , m_canSeek(false)
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    , m_loopStatus("None")
+#else
     , m_loopStatus(Mpris::None)
+#endif
     , m_maximumRate(1)
     , m_minimumRate(1)
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    , m_playbackStatus("Stopped")
+#else
     , m_playbackStatus(Mpris::Stopped)
+#endif
     , m_position(0)
     , m_rate(1)
     , m_shuffle(false)

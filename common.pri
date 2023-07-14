@@ -1,1 +1,1 @@
-MPRISQTLIB = mpris-qt5
+MPRISQTLIB = mpris-qt$${QT_MAJOR_VERSION}

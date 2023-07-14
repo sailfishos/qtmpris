@@ -1,0 +1,14 @@
+*.o
+*.so*
+moc_*
+*.moc
+*.a
+*.la
+Makefile
+.qmake.stash
+declarative/qmldir
+src/libmpris-qt5.prl
+src/mpris-qt5.prf
+src/libmpris-qt6.prl
+src/mpris-qt6.prf
+src/pkgconfig/

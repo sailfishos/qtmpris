@@ -17,7 +17,7 @@ use_system_dbus {
 
 DEPENDPATH += ../qtdbusextended
 INCLUDEPATH += ../qtdbusextended
-LIBS += -L../qtdbusextended -ldbusextended-qt5
+LIBS += -L../qtdbusextended -ldbusextended-qt$${QT_MAJOR_VERSION}
 
 # Generate pkg-config support by default
 # Note that we HAVE TO also create prl config as QMake implementation
@@ -64,7 +64,7 @@ prf.files = $${TARGET}.prf
 prf.path = $$[QMAKE_MKSPECS]/features
 INSTALLS += target headers prf
 
-QMAKE_PKGCONFIG_REQUIRES = Qt5Core Qt5DBus
+QMAKE_PKGCONFIG_REQUIRES = Qt$${QT_MAJOR_VERSION}Core Qt$${QT_MAJOR_VERSION}DBus
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_INCDIR = $$headers.path
 QMAKE_PKGCONFIG_DESTDIR = pkgconfig

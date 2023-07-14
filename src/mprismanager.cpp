@@ -29,7 +29,9 @@
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
-
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <QRegularExpression>
+#endif
 #include <QtCore/QSignalMapper>
 #include <QDebug>
 
@@ -68,9 +70,14 @@ MprisManager::MprisManager(QObject *parent)
     QStringList serviceNames = connection.interface()->registeredServiceNames();
     QStringList::const_iterator i = serviceNames.constBegin();
     while (i != serviceNames.constEnd()) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+        QRegularExpression rx(QRegularExpression::wildcardToRegularExpression(mprisNameSpace));
+        if (rx.match(*i).hasMatch()) {
+#else
         QRegExp rx(mprisNameSpace);
         rx.setPatternSyntax(QRegExp::Wildcard);
         if (rx.exactMatch(*i)) {
+#endif
             onServiceAppeared(*i);
         }
 
@@ -173,9 +180,14 @@ void MprisManager::setCurrentService(const QString &service)
         return;
     }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+    QRegularExpression rx(QRegularExpression::wildcardToRegularExpression(mprisNameSpace));
+    if (!rx.match(service).hasMatch()) {
+#else
     QRegExp rx(mprisNameSpace);
     rx.setPatternSyntax(QRegExp::Wildcard);
     if (!rx.exactMatch(service)) {
+#endif
         qWarning() << "Mpris:" << service << "is not a proper Mpris2 service";
         return;
     }
@@ -380,9 +392,14 @@ void MprisManager::onNameOwnerChanged(const QString &service, const QString &old
     // bus, not just the ones for our name space of interest, and we
     // will have to filter on our own :(
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+    QRegularExpression rx(QRegularExpression::wildcardToRegularExpression(mprisNameSpace));
+    if (!rx.match(service).hasMatch()) {
+#else
     QRegExp rx(mprisNameSpace);
     rx.setPatternSyntax(QRegExp::Wildcard);
     if (!rx.exactMatch(service)) {
+#endif
         return;
     }
 
